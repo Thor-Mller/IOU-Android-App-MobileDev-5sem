@@ -4,11 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -71,25 +69,18 @@ fun LoginScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.safeDrawing)
                         .padding(24.dp),
-                    verticalArrangement = Arrangement.Center,
+
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    Spacer(Modifier.height(32.dp))
+                    UsernameTextField(state.usernameState, required = true)
 
-                    UsernameTextField(state.usernameState)
-
-                    Spacer(Modifier.height(16.dp))
-
-                    PasswordTextField(state = state.passwordState)
-
-                    Spacer(Modifier.height(24.dp))
+                    PasswordTextField(state = state.passwordState, required = true)
 
                     Button(
-                        onClick = { viewModel.onLoginClicked() },
-                        enabled = viewModel.isFormValid
+                        onClick = { viewModel.onLoginClicked() }, enabled = viewModel.isFormValid
                     ) {
                         Text("Sign In")
                     }
@@ -99,7 +90,7 @@ fun LoginScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("No account?")
                 Button(
-                    onClick = { }) {
+                    onClick = { /* TODO: send to signup page */ }) {
                     Text("Create one here!", textAlign = TextAlign.Center)
                 }
             }

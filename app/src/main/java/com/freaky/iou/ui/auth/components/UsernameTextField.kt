@@ -9,11 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun UsernameTextField(state: TextFieldState, modifier: Modifier = Modifier) {
+fun UsernameTextField(
+    state: TextFieldState, modifier: Modifier = Modifier, required: Boolean = false
+) {
     OutlinedTextField(
         state = state,
         modifier = modifier.fillMaxWidth(),
-        label = { Text("Username") },
+        label = {
+            Text(
+                if (required) "Username*"
+                else "Username"
+            )
+        },
         lineLimits = TextFieldLineLimits.SingleLine,
+        supportingText = if (required) {
+            { Text("*required") }
+        } else null,
     )
 }
