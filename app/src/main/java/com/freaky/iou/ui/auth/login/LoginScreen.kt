@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,7 +32,9 @@ import com.freaky.iou.ui.theme.IOUTheme
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = viewModel(),
+    onNavigateToSignup: () -> Unit = {},
+    onLoginSuccess: (String) -> Unit = {},
 ) {
     val state = viewModel.state
 
@@ -44,6 +47,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing)
+                .verticalScroll(state = rememberScrollState())
                 .padding(24.dp),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,8 +63,7 @@ fun LoginScreen(
 
             Box(
                 modifier = Modifier
-                    .aspectRatio(ratio = 1.0f)
-                    .clip(CircleShape)
+                    .clip(RoundedCornerShape(10))
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .padding(24.dp),
                 contentAlignment = Alignment.Center
@@ -80,7 +83,11 @@ fun LoginScreen(
                     PasswordTextField(state = state.passwordState, required = true)
 
                     Button(
-                        onClick = { viewModel.onLoginClicked() }, enabled = viewModel.isFormValid
+                        onClick = {
+                            viewModel.onLoginClicked { username ->
+                                onLoginSuccess(username)
+                            }
+                        }, enabled = viewModel.isFormValid
                     ) {
                         Text("Sign In")
                     }
@@ -90,7 +97,8 @@ fun LoginScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("No account?")
                 Button(
-                    onClick = { /* TODO: send to signup page */ }) {
+                    onClick = onNavigateToSignup
+                ) {
                     Text("Create one here!", textAlign = TextAlign.Center)
                 }
             }

@@ -15,14 +15,17 @@ class LoginViewModel : ViewModel() {
         state.usernameState.text.isNotBlank() && state.passwordState.text.isNotBlank()
     }
 
-    fun onLoginClicked() {
+    fun onLoginClicked(onSuccess: (String) -> Unit) {
 
         if (!isFormValid) return
 
         // TODO: check credentials, send to homepage
 
+        val username = state.usernameState.text.toString()
+
         state.usernameState.clearText()
         state.passwordState.clearText()
 
+        onSuccess(username)
     }
 }
