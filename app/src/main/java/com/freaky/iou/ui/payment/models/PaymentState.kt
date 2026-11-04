@@ -1,4 +1,4 @@
-package com.freaky.iou.ui.payment
+package com.freaky.iou.ui.payment.models
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api

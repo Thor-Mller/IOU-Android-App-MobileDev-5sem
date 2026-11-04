@@ -1,4 +1,4 @@
-package com.freaky.iou.ui.payment
+package com.freaky.iou.ui.payment.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.freaky.iou.ui.payment.components.NumberField
+import com.freaky.iou.ui.payment.viewmodels.PaymentViewModel
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 

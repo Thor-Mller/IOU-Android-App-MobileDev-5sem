@@ -1,4 +1,4 @@
-package com.freaky.iou.ui.payment
+package com.freaky.iou.ui.payment.viewmodels
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.freaky.iou.ui.payment.models.PaymentState
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
