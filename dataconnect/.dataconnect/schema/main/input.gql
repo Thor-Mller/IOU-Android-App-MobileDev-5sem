@@ -1,0 +1,811 @@
+"""
+✨ `Expense_KeyOutput` returns the primary key fields of table type `Expense`.
+
+It has the same format as `Expense_Key`, but is only used as mutation return value.
+"""
+scalar Expense_KeyOutput
+"""
+✨ `ExpenseProviders_KeyOutput` returns the primary key fields of table type `ExpenseProviders`.
+
+It has the same format as `ExpenseProviders_Key`, but is only used as mutation return value.
+"""
+scalar ExpenseProviders_KeyOutput
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ Generated data input type for table 'Expense'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Expense_Data {
+  """
+  ✨ Generated from Field `Expense`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Expense`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Expense`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `Expense`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Expense`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Expense`.`amount` of type `Float!`
+  """
+  amount: Float
+  """
+  ✨ `_expr` server value variant of `amount` (✨ Generated from Field `Expense`.`amount` of type `Float!`)
+  """
+  amount_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `amount` (✨ Generated from Field `Expense`.`amount` of type `Float!`)
+  """
+  amount_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Expense`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Expense`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Expense`.`expenseProviderss_on_expense` of type `[ExpenseProviders!]!`
+  """
+  expenseProviderss_on_expense: [ExpenseProviders_Data!]
+}
+"""
+✨ Generated filter input type for table 'Expense'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Expense_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Expense_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Expense_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Expense_Filter!]
+  """
+  ✨ Generated from Field `Expense`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Expense`.`userId` of type `String!`
+  """
+  userId: String_Filter
+  """
+  ✨ Generated from Field `Expense`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `Expense`.`amount` of type `Float!`
+  """
+  amount: Float_Filter
+  """
+  ✨ Generated from Field `Expense`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Expense`.`expenseProviderss_on_expense` of type `[ExpenseProviders!]!`
+  """
+  expenseProviderss_on_expense: ExpenseProviders_ListFilter
+  """
+  ✨ Generated from Field `Expense`.`users_via_ExpenseProviders` of type `[User!]!`
+  """
+  users_via_ExpenseProviders: User_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Expense'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Expense_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Expense_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Expense_Filter
+}
+"""
+✨ Generated having input type for table 'Expense'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Expense_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Expense_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Expense_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Expense_Having!]
+  """
+  ✨ Generated from Field `Expense`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Expense`.`amount_count` of type `Int!`
+  """
+  amount_count: Int_Filter
+  """
+  ✨ Generated from Field `Expense`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Expense`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Expense`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `Expense`.`amount_sum` of type `Float`
+  """
+  amount_sum: Float_Filter
+  """
+  ✨ Generated from Field `Expense`.`amount_avg` of type `Float`
+  """
+  amount_avg: Float_Filter
+  """
+  ✨ Generated from Field `Expense`.`amount_min` of type `Float`
+  """
+  amount_min: Float_Filter
+  """
+  ✨ Generated from Field `Expense`.`amount_max` of type `Float`
+  """
+  amount_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'Expense'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Expense_Key {
+  """
+  ✨ Generated from Field `Expense`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Expense`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Expense'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Expense_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Expense_Filter
+}
+"""
+✨ Generated order input type for table 'Expense'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Expense_Order {
+  """
+  ✨ Generated from Field `Expense`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`userId` of type `String!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `Expense`.`amount` of type `Float!`
+  """
+  amount: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`amount_count` of type `Int!`
+  """
+  amount_count: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`amount_sum` of type `Float`
+  """
+  amount_sum: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`amount_avg` of type `Float`
+  """
+  amount_avg: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`amount_min` of type `Float`
+  """
+  amount_min: OrderDirection
+  """
+  ✨ Generated from Field `Expense`.`amount_max` of type `Float`
+  """
+  amount_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'ExpenseProviders'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input ExpenseProviders_Data {
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expenseId` of type `UUID!`
+  """
+  expenseId: UUID
+  """
+  ✨ `_expr` server value variant of `expenseId` (✨ Generated from Field `ExpenseProviders`.`expenseId` of type `UUID!`)
+  """
+  expenseId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ExpenseProviders`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `ExpenseProviders`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expense` of type `Expense!`
+  """
+  expense: Expense_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ExpenseProviders`.`user` of type `User!`
+  """
+  user: User_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount` of type `Float`
+  """
+  shareAmount: Float
+  """
+  ✨ `_expr` server value variant of `shareAmount` (✨ Generated from Field `ExpenseProviders`.`shareAmount` of type `Float`)
+  """
+  shareAmount_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `shareAmount` (✨ Generated from Field `ExpenseProviders`.`shareAmount` of type `Float`)
+  """
+  shareAmount_update: [Float_Update!] @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'ExpenseProviders'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input ExpenseProviders_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [ExpenseProviders_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: ExpenseProviders_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [ExpenseProviders_Filter!]
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expenseId` of type `UUID!`
+  """
+  expenseId: UUID_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`userId` of type `String!`
+  """
+  userId: String_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expense` of type `Expense!`
+  """
+  expense: Expense_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount` of type `Float`
+  """
+  shareAmount: Float_Filter
+}
+"""
+✨ Generated first-row input type for table 'ExpenseProviders'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input ExpenseProviders_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [ExpenseProviders_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: ExpenseProviders_Filter
+}
+"""
+✨ Generated having input type for table 'ExpenseProviders'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input ExpenseProviders_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [ExpenseProviders_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: ExpenseProviders_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [ExpenseProviders_Having!]
+  """
+  ✨ Generated from Field `ExpenseProviders`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expenseId_count` of type `Int!`
+  """
+  expenseId_count: Int_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_count` of type `Int!`
+  """
+  shareAmount_count: Int_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_sum` of type `Float`
+  """
+  shareAmount_sum: Float_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_avg` of type `Float`
+  """
+  shareAmount_avg: Float_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_min` of type `Float`
+  """
+  shareAmount_min: Float_Filter
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_max` of type `Float`
+  """
+  shareAmount_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'ExpenseProviders'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input ExpenseProviders_Key {
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expenseId` of type `UUID!`
+  """
+  expenseId: UUID
+  """
+  ✨ `_expr` server value variant of `expenseId` (✨ Generated from Field `ExpenseProviders`.`expenseId` of type `UUID!`)
+  """
+  expenseId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ExpenseProviders`.`userId` of type `String!`
+  """
+  userId: String
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `ExpenseProviders`.`userId` of type `String!`)
+  """
+  userId_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'ExpenseProviders'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input ExpenseProviders_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: ExpenseProviders_Filter
+}
+"""
+✨ Generated order input type for table 'ExpenseProviders'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input ExpenseProviders_Order {
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expenseId` of type `UUID!`
+  """
+  expenseId: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`userId` of type `String!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expense` of type `Expense!`
+  """
+  expense: Expense_Order
+  """
+  ✨ Generated from Field `ExpenseProviders`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount` of type `Float`
+  """
+  shareAmount: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`expenseId_count` of type `Int!`
+  """
+  expenseId_count: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_count` of type `Int!`
+  """
+  shareAmount_count: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_sum` of type `Float`
+  """
+  shareAmount_sum: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_avg` of type `Float`
+  """
+  shareAmount_avg: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_min` of type `Float`
+  """
+  shareAmount_min: OrderDirection
+  """
+  ✨ Generated from Field `ExpenseProviders`.`shareAmount_max` of type `Float`
+  """
+  shareAmount_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`phone` of type `String!`
+  """
+  phone: String
+  """
+  ✨ `_expr` server value variant of `phone` (✨ Generated from Field `User`.`phone` of type `String!`)
+  """
+  phone_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`totalDebt` of type `Float!`
+  """
+  totalDebt: Float
+  """
+  ✨ `_expr` server value variant of `totalDebt` (✨ Generated from Field `User`.`totalDebt` of type `Float!`)
+  """
+  totalDebt_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `totalDebt` (✨ Generated from Field `User`.`totalDebt` of type `Float!`)
+  """
+  totalDebt_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`totalMissing` of type `Float!`
+  """
+  totalMissing: Float
+  """
+  ✨ `_expr` server value variant of `totalMissing` (✨ Generated from Field `User`.`totalMissing` of type `Float!`)
+  """
+  totalMissing_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `totalMissing` (✨ Generated from Field `User`.`totalMissing` of type `Float!`)
+  """
+  totalMissing_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String
+  """
+  ✨ `_expr` server value variant of `username` (✨ Generated from Field `User`.`username` of type `String!`)
+  """
+  username_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `User`.`expenses_on_user` of type `[Expense!]!`
+  """
+  expenses_on_user: [Expense_Data!]
+  """
+  ✨ Generated from Field `User`.`expenseProviderss_on_user` of type `[ExpenseProviders!]!`
+  """
+  expenseProviderss_on_user: [ExpenseProviders_Data!]
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `User`.`phone` of type `String!`
+  """
+  phone: String_Filter
+  """
+  ✨ Generated from Field `User`.`totalDebt` of type `Float!`
+  """
+  totalDebt: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalMissing` of type `Float!`
+  """
+  totalMissing: Float_Filter
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String_Filter
+  """
+  ✨ Generated from Field `User`.`expenses_on_user` of type `[Expense!]!`
+  """
+  expenses_on_user: Expense_ListFilter
+  """
+  ✨ Generated from Field `User`.`expenseProviderss_on_user` of type `[ExpenseProviders!]!`
+  """
+  expenseProviderss_on_user: ExpenseProviders_ListFilter
+  """
+  ✨ Generated from Field `User`.`expenses_via_ExpenseProviders` of type `[Expense!]!`
+  """
+  expenses_via_ExpenseProviders: Expense_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`phone_count` of type `Int!`
+  """
+  phone_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalDebt_count` of type `Int!`
+  """
+  totalDebt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalMissing_count` of type `Int!`
+  """
+  totalMissing_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`totalDebt_sum` of type `Float`
+  """
+  totalDebt_sum: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalMissing_sum` of type `Float`
+  """
+  totalMissing_sum: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalDebt_avg` of type `Float`
+  """
+  totalDebt_avg: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalMissing_avg` of type `Float`
+  """
+  totalMissing_avg: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalDebt_min` of type `Float`
+  """
+  totalDebt_min: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalMissing_min` of type `Float`
+  """
+  totalMissing_min: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalDebt_max` of type `Float`
+  """
+  totalDebt_max: Float_Filter
+  """
+  ✨ Generated from Field `User`.`totalMissing_max` of type `Float`
+  """
+  totalMissing_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`phone` of type `String!`
+  """
+  phone: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalDebt` of type `Float!`
+  """
+  totalDebt: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalMissing` of type `Float!`
+  """
+  totalMissing: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`phone_count` of type `Int!`
+  """
+  phone_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalDebt_count` of type `Int!`
+  """
+  totalDebt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalMissing_count` of type `Int!`
+  """
+  totalMissing_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalDebt_sum` of type `Float`
+  """
+  totalDebt_sum: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalMissing_sum` of type `Float`
+  """
+  totalMissing_sum: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalDebt_avg` of type `Float`
+  """
+  totalDebt_avg: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalMissing_avg` of type `Float`
+  """
+  totalMissing_avg: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalDebt_min` of type `Float`
+  """
+  totalDebt_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalMissing_min` of type `Float`
+  """
+  totalMissing_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalDebt_max` of type `Float`
+  """
+  totalDebt_max: OrderDirection
+  """
+  ✨ Generated from Field `User`.`totalMissing_max` of type `Float`
+  """
+  totalMissing_max: OrderDirection
+}
