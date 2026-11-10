@@ -1,16 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.example.iou"
+    namespace = "com.freaky.iou"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.iou"
+        applicationId = "com.freaky.iou"
         minSdk = 33
         targetSdk = 37
         versionCode = 1
