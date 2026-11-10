@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,13 +25,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.freaky.iou.ui.auth.components.EmailTextField
 import com.freaky.iou.ui.auth.components.PasswordTextField
 import com.freaky.iou.ui.auth.components.UsernameTextField
 import com.freaky.iou.ui.theme.IOUTheme
 
 @Composable
-fun SignupScreen(viewModel: SignupViewModel) {
+fun SignupScreen(
+    viewModel: SignupViewModel = viewModel(),
+    onNavigateToLogin: () -> Unit = {},
+    onSignupSuccess: (String) -> Unit = {},
+) {
     val state = viewModel.state;
 
     Surface(
@@ -42,6 +48,7 @@ fun SignupScreen(viewModel: SignupViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing)
+                .verticalScroll(state = rememberScrollState())
                 .padding(24.dp),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,8 +64,7 @@ fun SignupScreen(viewModel: SignupViewModel) {
 
             Box(
                 modifier = Modifier
-                    .aspectRatio(ratio = 0.6f)
-                    .clip(CircleShape)
+                    .clip(RoundedCornerShape(10))
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .padding(24.dp),
                 contentAlignment = Alignment.Center
@@ -87,7 +93,11 @@ fun SignupScreen(viewModel: SignupViewModel) {
                     )
 
                     Button(
-                        onClick = { viewModel.onSignupClicked() }, enabled = viewModel.isFormValid
+                        onClick = {
+                            viewModel.onSignupClicked { username ->
+                                onSignupSuccess(username)
+                            }
+                        }, enabled = viewModel.isFormValid
                     ) {
                         Text("Sign Up")
                     }
@@ -97,7 +107,8 @@ fun SignupScreen(viewModel: SignupViewModel) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Already have an account?")
                 Button(
-                    onClick = { /* TODO: send to login page */ }) {
+                    onClick = onNavigateToLogin
+                ) {
                     Text("Log in!", textAlign = TextAlign.Center)
                 }
             }
@@ -112,6 +123,6 @@ fun SignupScreen(viewModel: SignupViewModel) {
 @Composable
 fun SignupScreenPreview() {
     IOUTheme(darkTheme = true) {
-        SignupScreen(SignupViewModel())
+        SignupScreen()
     }
 }

@@ -4,16 +4,17 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 
     kotlin("plugin.serialization") version libs.versions.kotlin
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.example.iou"
+    namespace = "com.freaky.iou"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.iou"
+        applicationId = "com.freaky.iou"
         minSdk = 33
         targetSdk = 37
         versionCode = 1
