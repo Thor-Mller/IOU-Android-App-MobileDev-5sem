@@ -1,0 +1,424 @@
+extend type Expense {
+  """
+  ✨ List `ExpenseProvider` objects in a one-to-many relationship (where `ExpenseProvider`.`expense` is this object).
+  """
+  expenseProviders_on_expense(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ExpenseProvider_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ExpenseProvider_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ExpenseProvider_Having
+  ): [ExpenseProvider!]! @fdc_generated(from: "ExpenseProvider.expense", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `User` objects using `ExpenseProvider` as the join table (a `ExpenseProvider` object exists where its `expense` is this and its `user` is that).
+  """
+  users_via_ExpenseProvider(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ExpenseProvider_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ExpenseProvider_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ExpenseProvider_Having
+  ): [User!]! @fdc_generated(from: "ExpenseProvider", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Expense", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Expense` table.
+  """
+  _count: Int! @fdc_generated(from: "Expense.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Expense` table where the `amount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  amount_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Expense.amount", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Expense` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Expense.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Expense` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Expense.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Expense` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Expense.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `amount` field in the `Expense` table.
+  """
+  amount_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Expense.amount", purpose: QUERY_SUM)
+  """
+  ✨ Average the `amount` field in the `Expense` table.
+  """
+  amount_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Expense.amount", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `amount` field in the `Expense` table.
+  """
+  amount_min: Float @fdc_generated(from: "Expense.amount", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `amount` field in the `Expense` table.
+  """
+  amount_max: Float @fdc_generated(from: "Expense.amount", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Expense.id", purpose: ENTITY_ID)
+}
+extend type ExpenseProvider {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "ExpenseProvider", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `ExpenseProvider` table.
+  """
+  _count: Int! @fdc_generated(from: "ExpenseProvider.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ExpenseProvider` table where the `expenseId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  expenseId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ExpenseProvider.expenseId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ExpenseProvider` table where the `shareAmount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  shareAmount_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ExpenseProvider` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ExpenseProvider.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `shareAmount` field in the `ExpenseProvider` table.
+  """
+  shareAmount_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_SUM)
+  """
+  ✨ Average the `shareAmount` field in the `ExpenseProvider` table.
+  """
+  shareAmount_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `shareAmount` field in the `ExpenseProvider` table.
+  """
+  shareAmount_min: Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `shareAmount` field in the `ExpenseProvider` table.
+  """
+  shareAmount_max: Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "ExpenseProvider.expenseId,userId", purpose: ENTITY_ID)
+}
+extend type User {
+  """
+  ✨ List `Expense` objects in a one-to-many relationship (where `Expense`.`user` is this object).
+  """
+  expenses_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Expense_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Expense_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Expense_Having
+  ): [Expense!]! @fdc_generated(from: "Expense.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `ExpenseProvider` objects in a one-to-many relationship (where `ExpenseProvider`.`user` is this object).
+  """
+  expenseProviders_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ExpenseProvider_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ExpenseProvider_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ExpenseProvider_Having
+  ): [ExpenseProvider!]! @fdc_generated(from: "ExpenseProvider.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Expense` objects using `ExpenseProvider` as the join table (a `ExpenseProvider` object exists where its `user` is this and its `expense` is that).
+  """
+  expenses_via_ExpenseProvider(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: ExpenseProvider_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [ExpenseProvider_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: ExpenseProvider_Having
+  ): [Expense!]! @fdc_generated(from: "ExpenseProvider", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "User", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `User` table.
+  """
+  _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `phone` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  phone_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.phone", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `totalDebt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  totalDebt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.totalDebt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `totalMissing` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  totalMissing_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.totalMissing", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  username_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.username", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `totalDebt` field in the `User` table.
+  """
+  totalDebt_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.totalDebt", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `totalMissing` field in the `User` table.
+  """
+  totalMissing_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.totalMissing", purpose: QUERY_SUM)
+  """
+  ✨ Average the `totalDebt` field in the `User` table.
+  """
+  totalDebt_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.totalDebt", purpose: QUERY_AVG)
+  """
+  ✨ Average the `totalMissing` field in the `User` table.
+  """
+  totalMissing_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.totalMissing", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `totalDebt` field in the `User` table.
+  """
+  totalDebt_min: Float @fdc_generated(from: "User.totalDebt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `totalMissing` field in the `User` table.
+  """
+  totalMissing_min: Float @fdc_generated(from: "User.totalMissing", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `totalDebt` field in the `User` table.
+  """
+  totalDebt_max: Float @fdc_generated(from: "User.totalDebt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `totalMissing` field in the `User` table.
+  """
+  totalMissing_max: Float @fdc_generated(from: "User.totalMissing", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "User.id", purpose: ENTITY_ID)
+}
