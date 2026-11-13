@@ -1,0 +1,84 @@
+# example/mutations.gql
+mutation UpsertCurrentUser(
+  $userId: String!
+  $username: String!
+  $phone: String!
+) @auth(level: PUBLIC) {
+  user_upsert(
+    data: {
+      id: $userId
+      username: $username
+      phone: $phone
+      totalMissing: 0.0
+      totalDebt: 0.0
+    }
+  )
+}
+
+mutation CreateExpense(
+  $userId: String!
+  $name: String!
+  $amount: Float!
+) @auth(level: PUBLIC) {
+  expense_insert(
+    data: {
+      userId: $userId
+      name: $name
+      amount: $amount
+    }
+  )
+}
+
+# 3. Add a debtor to an expense (only allowed if the caller owns the expense)
+mutation AddDebtorToExpense(
+  $expenseId: UUID!
+  $debtorUserId: String!
+  $shareAmount: Float!
+) @auth(level: USER) {
+  query @redact {
+    expense(key: { id: $expenseId })
+      @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can add debtors") {
+      user {
+        id
+      }
+    }
+  }
+  expenseProvider_insert(
+    data: {
+      expenseId: $expenseId
+      userId: $debtorUserId
+      shareAmount: $shareAmount
+    }
+  )
+}
+
+# 5. Settle/remove a debtor's share (only allowed if the caller owns the expense)
+mutation SettleUserShare($expenseId: UUID!, $debtorUserId: String!) @auth(level: PUBLIC) {
+  query @redact {
+    expense(key: { id: $expenseId })
+      @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can settle shares") {
+      user {
+        id
+      }
+    }
+  }
+  expenseProvider_delete(
+    key: {
+      expenseId: $expenseId
+      userId: $debtorUserId
+    }
+  )
+}
+
+# 6. Delete an expense (only allowed if the caller owns the expense)
+mutation DeleteExpense($expenseId: UUID!) @auth(level: PUBLIC) {
+  query @redact {
+    expense(key: { id: $expenseId })
+      @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can delete this expense") {
+      user {
+        id
+      }
+    }
+  }
+  expense_delete(key: { id: $expenseId })
+}
