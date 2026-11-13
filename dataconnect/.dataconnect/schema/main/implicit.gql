@@ -8,13 +8,13 @@ extend type Expense {
   """
   userId: String! @fdc_generated(from: "Expense.user", purpose: IMPLICIT_REF_FIELD)
 }
-extend type ExpenseProviders {
+extend type ExpenseProvider {
   """
-  ✨ Implicit foreign key field based on `ExpenseProviders`.`expense`. It must match the value of `Expense`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `ExpenseProvider`.`expense`. It must match the value of `Expense`.`id`. See `@ref` for how to customize it.
   """
-  expenseId: UUID! @fdc_generated(from: "ExpenseProviders.expense", purpose: IMPLICIT_REF_FIELD)
+  expenseId: UUID! @fdc_generated(from: "ExpenseProvider.expense", purpose: IMPLICIT_REF_FIELD)
   """
-  ✨ Implicit foreign key field based on `ExpenseProviders`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `ExpenseProvider`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
-  userId: String! @fdc_generated(from: "ExpenseProviders.user", purpose: IMPLICIT_REF_FIELD)
+  userId: String! @fdc_generated(from: "ExpenseProvider.user", purpose: IMPLICIT_REF_FIELD)
 }

@@ -1,65 +1,78 @@
 package com.freaky.iou
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.freaky.iou.ui.navigation.AppNavigation
+import com.example.iou.data.ExpenseRepository
 import com.freaky.iou.ui.theme.IOUTheme
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.launch
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             IOUTheme {
-                AppNavigation()
-
-                /*
-                Greeting(
-                    name = "Android",
-                    modifier = Modifier.padding(innerPadding)
-                )
-                 */
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        TestButton()
+                    }
+                }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val db = Firebase.firestore
-    val user = hashMapOf(
-        "email" to "mathias@skarving.com",
-        "name" to "Mathias",
-        "phone" to "61676640",
-        "totalDebt" to 0,
-        "totalMissing" to 0
-    )
+suspend fun buttonClick() {
+    try {
+        val repo = ExpenseRepository()
+        val date = Date.from(java.time.Instant.now())
+        repo.upsertUser(
+            userId = "test-user-2", username = "user$date", phone = "10101010"
+        )
+        Log.d("IOU", "User upserted successfully!")
+    } catch (e: Exception) {
+        Log.e("IOU", "Error: ${e.message}", e)
+    }
+}
 
-// Add a new document with a generated ID
-    db.collection("users")
-        .add(user)
-        .addOnSuccessListener { documentReference ->
-            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+@Composable
+fun TestButton() {
+    val scope = rememberCoroutineScope()
+
+    Button(onClick = {
+        scope.launch {
+            buttonClick()
         }
-        .addOnFailureListener { e ->
-            Log.w(TAG, "Error adding document", e)
-        }
+    }) {
+        Text("ADD USER!")
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    IOUTheme {
-        Greeting("Android")
-    }
+    IOUTheme {}
 }

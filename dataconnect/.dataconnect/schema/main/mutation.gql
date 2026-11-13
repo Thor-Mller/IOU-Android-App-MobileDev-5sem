@@ -9,14 +9,14 @@ extend type Mutation {
     data: Expense_Data!
   ): Expense_KeyOutput! @fdc_generated(from: "Expense", purpose: INSERT_SINGLE)
   """
-  ✨ Insert a single `ExpenseProviders` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert a single `ExpenseProvider` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  expenseProviders_insert(
+  expenseProvider_insert(
     """
     Data object to insert into the table.
     """
-    data: ExpenseProviders_Data!
-  ): ExpenseProviders_KeyOutput! @fdc_generated(from: "ExpenseProviders", purpose: INSERT_SINGLE)
+    data: ExpenseProvider_Data!
+  ): ExpenseProvider_KeyOutput! @fdc_generated(from: "ExpenseProvider", purpose: INSERT_SINGLE)
   """
   ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -36,14 +36,14 @@ extend type Mutation {
     data: [Expense_Data!]!
   ): [Expense_KeyOutput!]! @fdc_generated(from: "Expense", purpose: INSERT_MULTIPLE)
   """
-  ✨ Insert `ExpenseProviders` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  ✨ Insert `ExpenseProvider` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
-  expenseProviders_insertMany(
+  expenseProvider_insertMany(
     """
     List of data objects to insert into the table.
     """
-    data: [ExpenseProviders_Data!]!
-  ): [ExpenseProviders_KeyOutput!]! @fdc_generated(from: "ExpenseProviders", purpose: INSERT_MULTIPLE)
+    data: [ExpenseProvider_Data!]!
+  ): [ExpenseProvider_KeyOutput!]! @fdc_generated(from: "ExpenseProvider", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -63,14 +63,14 @@ extend type Mutation {
     data: Expense_Data!
   ): Expense_KeyOutput! @fdc_generated(from: "Expense", purpose: UPSERT_SINGLE)
   """
-  ✨ Insert or update a single `ExpenseProviders` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ExpenseProviders`.
+  ✨ Insert or update a single `ExpenseProvider` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ExpenseProvider`.
   """
-  expenseProviders_upsert(
+  expenseProvider_upsert(
     """
     Data object to insert or update if it already exists.
     """
-    data: ExpenseProviders_Data!
-  ): ExpenseProviders_KeyOutput! @fdc_generated(from: "ExpenseProviders", purpose: UPSERT_SINGLE)
+    data: ExpenseProvider_Data!
+  ): ExpenseProvider_KeyOutput! @fdc_generated(from: "ExpenseProvider", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
@@ -90,14 +90,14 @@ extend type Mutation {
     data: [Expense_Data!]!
   ): [Expense_KeyOutput!]! @fdc_generated(from: "Expense", purpose: UPSERT_MULTIPLE)
   """
-  ✨ Insert or update `ExpenseProviders` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ExpenseProviders`.
+  ✨ Insert or update `ExpenseProvider` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ExpenseProvider`.
   """
-  expenseProviders_upsertMany(
+  expenseProvider_upsertMany(
     """
     List of data objects to insert or update if it already exists.
     """
-    data: [ExpenseProviders_Data!]!
-  ): [ExpenseProviders_KeyOutput!]! @fdc_generated(from: "ExpenseProviders", purpose: UPSERT_MULTIPLE)
+    data: [ExpenseProvider_Data!]!
+  ): [ExpenseProvider_KeyOutput!]! @fdc_generated(from: "ExpenseProvider", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
   """
@@ -132,24 +132,24 @@ extend type Mutation {
     data: Expense_Data!
   ): Expense_KeyOutput @fdc_generated(from: "Expense", purpose: UPDATE_SINGLE)
   """
-  ✨ Update a single `ExpenseProviders` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `ExpenseProviders` or `null` if not found.
+  ✨ Update a single `ExpenseProvider` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `ExpenseProvider` or `null` if not found.
   """
-  expenseProviders_update(
+  expenseProvider_update(
     """
     The key used to identify the object.
     """
-    key: ExpenseProviders_Key
+    key: ExpenseProvider_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: ExpenseProviders_FirstRow
+    first: ExpenseProvider_FirstRow
 
     """
     Data object containing fields to be updated.
     """
-    data: ExpenseProviders_Data!
-  ): ExpenseProviders_KeyOutput @fdc_generated(from: "ExpenseProviders", purpose: UPDATE_SINGLE)
+    data: ExpenseProvider_Data!
+  ): ExpenseProvider_KeyOutput @fdc_generated(from: "ExpenseProvider", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
   """
@@ -199,13 +199,13 @@ extend type Mutation {
     data: Expense_Data!
   ): Int! @fdc_generated(from: "Expense", purpose: UPDATE_MULTIPLE)
   """
-  ✨ Update `ExpenseProviders` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  ✨ Update `ExpenseProvider` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
-  expenseProviders_updateMany(
+  expenseProvider_updateMany(
     """
     Filter condition to specify which rows to update.
     """
-    where: ExpenseProviders_Filter
+    where: ExpenseProvider_Filter
 
     """
     Set to true to update all rows.
@@ -215,8 +215,8 @@ extend type Mutation {
     """
     Data object containing fields to update.
     """
-    data: ExpenseProviders_Data!
-  ): Int! @fdc_generated(from: "ExpenseProviders", purpose: UPDATE_MULTIPLE)
+    data: ExpenseProvider_Data!
+  ): Int! @fdc_generated(from: "ExpenseProvider", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -256,19 +256,19 @@ extend type Mutation {
     first: Expense_FirstRow
   ): Expense_KeyOutput @fdc_generated(from: "Expense", purpose: DELETE_SINGLE)
   """
-  ✨ Delete a single `ExpenseProviders` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  ✨ Delete a single `ExpenseProvider` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
-  expenseProviders_delete(
+  expenseProvider_delete(
     """
     The key used to identify the object.
     """
-    key: ExpenseProviders_Key
+    key: ExpenseProvider_Key
 
     """
     Fetch the first row based on the filters and ordering.
     """
-    first: ExpenseProviders_FirstRow
-  ): ExpenseProviders_KeyOutput @fdc_generated(from: "ExpenseProviders", purpose: DELETE_SINGLE)
+    first: ExpenseProvider_FirstRow
+  ): ExpenseProvider_KeyOutput @fdc_generated(from: "ExpenseProvider", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -308,19 +308,19 @@ extend type Mutation {
     all: Boolean = false
   ): Int! @fdc_generated(from: "Expense", purpose: DELETE_MULTIPLE)
   """
-  ✨ Delete `ExpenseProviders` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  ✨ Delete `ExpenseProvider` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
-  expenseProviders_deleteMany(
+  expenseProvider_deleteMany(
     """
     Filter condition to specify which rows to delete.
     """
-    where: ExpenseProviders_Filter
+    where: ExpenseProvider_Filter
 
     """
     Set to true to delete all rows.
     """
     all: Boolean = false
-  ): Int! @fdc_generated(from: "ExpenseProviders", purpose: DELETE_MULTIPLE)
+  ): Int! @fdc_generated(from: "ExpenseProvider", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

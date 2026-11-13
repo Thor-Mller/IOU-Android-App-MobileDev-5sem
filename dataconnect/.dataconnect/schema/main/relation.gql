@@ -1,17 +1,17 @@
 extend type Expense {
   """
-  ✨ List `ExpenseProviders` objects in a one-to-many relationship (where `ExpenseProviders`.`expense` is this object).
+  ✨ List `ExpenseProvider` objects in a one-to-many relationship (where `ExpenseProvider`.`expense` is this object).
   """
-  expenseProviderss_on_expense(
+  expenseProviders_on_expense(
     """
     Filter condition to narrow down the query results.
     """
-    where: ExpenseProviders_Filter
+    where: ExpenseProvider_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [ExpenseProviders_Order!]
+    orderBy: [ExpenseProvider_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -31,21 +31,21 @@ extend type Expense {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: ExpenseProviders_Having
-  ): [ExpenseProviders!]! @fdc_generated(from: "ExpenseProviders.expense", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+    having: ExpenseProvider_Having
+  ): [ExpenseProvider!]! @fdc_generated(from: "ExpenseProvider.expense", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
-  ✨ List `User` objects using `ExpenseProviders` as the join table (a `ExpenseProviders` object exists where its `expense` is this and its `user` is that).
+  ✨ List `User` objects using `ExpenseProvider` as the join table (a `ExpenseProvider` object exists where its `expense` is this and its `user` is that).
   """
-  users_via_ExpenseProviders(
+  users_via_ExpenseProvider(
     """
     Filter condition to narrow down the query results.
     """
-    where: ExpenseProviders_Filter
+    where: ExpenseProvider_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [ExpenseProviders_Order!]
+    orderBy: [ExpenseProvider_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -65,8 +65,8 @@ extend type Expense {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: ExpenseProviders_Having
-  ): [User!]! @fdc_generated(from: "ExpenseProviders", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+    having: ExpenseProvider_Having
+  ): [User!]! @fdc_generated(from: "ExpenseProvider", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
@@ -142,72 +142,72 @@ extend type Expense {
   """
   _id: ID! @fdc_generated(from: "Expense.id", purpose: ENTITY_ID)
 }
-extend type ExpenseProviders {
+extend type ExpenseProvider {
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
-  _metadata: _Metadata @fdc_generated(from: "ExpenseProviders", purpose: METADATA_FIELD)
+  _metadata: _Metadata @fdc_generated(from: "ExpenseProvider", purpose: METADATA_FIELD)
   """
-  ✨ Count the number of rows in the `ExpenseProviders` table.
+  ✨ Count the number of rows in the `ExpenseProvider` table.
   """
-  _count: Int! @fdc_generated(from: "ExpenseProviders.", purpose: QUERY_COUNT)
+  _count: Int! @fdc_generated(from: "ExpenseProvider.", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `ExpenseProviders` table where the `expenseId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `ExpenseProvider` table where the `expenseId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   expenseId_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "ExpenseProviders.expenseId", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "ExpenseProvider.expenseId", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `ExpenseProviders` table where the `shareAmount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `ExpenseProvider` table where the `shareAmount` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   shareAmount_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "ExpenseProviders.shareAmount", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `ExpenseProviders` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `ExpenseProvider` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   userId_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "ExpenseProviders.userId", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "ExpenseProvider.userId", purpose: QUERY_COUNT)
   """
-  ✨ Sum the `shareAmount` field in the `ExpenseProviders` table.
+  ✨ Sum the `shareAmount` field in the `ExpenseProvider` table.
   """
   shareAmount_sum(
     """
     Set to true to sum the distinct values.
     """
     distinct: Boolean = false
-  ): Float @fdc_generated(from: "ExpenseProviders.shareAmount", purpose: QUERY_SUM)
+  ): Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_SUM)
   """
-  ✨ Average the `shareAmount` field in the `ExpenseProviders` table.
+  ✨ Average the `shareAmount` field in the `ExpenseProvider` table.
   """
   shareAmount_avg(
     """
     Set to true to average the distinct values.
     """
     distinct: Boolean = false
-  ): Float @fdc_generated(from: "ExpenseProviders.shareAmount", purpose: QUERY_AVG)
+  ): Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_AVG)
   """
-  ✨ Minimum of the `shareAmount` field in the `ExpenseProviders` table.
+  ✨ Minimum of the `shareAmount` field in the `ExpenseProvider` table.
   """
-  shareAmount_min: Float @fdc_generated(from: "ExpenseProviders.shareAmount", purpose: QUERY_MIN)
+  shareAmount_min: Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_MIN)
   """
-  ✨ Maximum of the `shareAmount` field in the `ExpenseProviders` table.
+  ✨ Maximum of the `shareAmount` field in the `ExpenseProvider` table.
   """
-  shareAmount_max: Float @fdc_generated(from: "ExpenseProviders.shareAmount", purpose: QUERY_MAX)
+  shareAmount_max: Float @fdc_generated(from: "ExpenseProvider.shareAmount", purpose: QUERY_MAX)
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "ExpenseProviders.expenseId,userId", purpose: ENTITY_ID)
+  _id: ID! @fdc_generated(from: "ExpenseProvider.expenseId,userId", purpose: ENTITY_ID)
 }
 extend type User {
   """
@@ -245,18 +245,18 @@ extend type User {
     having: Expense_Having
   ): [Expense!]! @fdc_generated(from: "Expense.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
-  ✨ List `ExpenseProviders` objects in a one-to-many relationship (where `ExpenseProviders`.`user` is this object).
+  ✨ List `ExpenseProvider` objects in a one-to-many relationship (where `ExpenseProvider`.`user` is this object).
   """
-  expenseProviderss_on_user(
+  expenseProviders_on_user(
     """
     Filter condition to narrow down the query results.
     """
-    where: ExpenseProviders_Filter
+    where: ExpenseProvider_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [ExpenseProviders_Order!]
+    orderBy: [ExpenseProvider_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -276,21 +276,21 @@ extend type User {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: ExpenseProviders_Having
-  ): [ExpenseProviders!]! @fdc_generated(from: "ExpenseProviders.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+    having: ExpenseProvider_Having
+  ): [ExpenseProvider!]! @fdc_generated(from: "ExpenseProvider.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
-  ✨ List `Expense` objects using `ExpenseProviders` as the join table (a `ExpenseProviders` object exists where its `user` is this and its `expense` is that).
+  ✨ List `Expense` objects using `ExpenseProvider` as the join table (a `ExpenseProvider` object exists where its `user` is this and its `expense` is that).
   """
-  expenses_via_ExpenseProviders(
+  expenses_via_ExpenseProvider(
     """
     Filter condition to narrow down the query results.
     """
-    where: ExpenseProviders_Filter
+    where: ExpenseProvider_Filter
 
     """
     Order the query results by specific fields.
     """
-    orderBy: [ExpenseProviders_Order!]
+    orderBy: [ExpenseProvider_Order!]
 
     """
     Number of rows to skip before starting to return the results.
@@ -310,8 +310,8 @@ extend type User {
     """
     Filter condition to apply to the groups of aggregate queries.
     """
-    having: ExpenseProviders_Having
-  ): [Expense!]! @fdc_generated(from: "ExpenseProviders", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+    having: ExpenseProvider_Having
+  ): [Expense!]! @fdc_generated(from: "ExpenseProvider", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
