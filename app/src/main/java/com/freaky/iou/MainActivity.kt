@@ -17,7 +17,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.freaky.iou.data.ExpenseRepository
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -44,27 +43,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-suspend fun buttonClick() {
-    try {
-        val repo = ExpenseRepository()
-        val date = Date.from(java.time.Instant.now())
-        repo.upsertUser(
-            userId = "test-user-2", username = "user$date", phone = "10101010"
-        )
-        Log.d("IOU", "User upserted successfully!")
-    } catch (e: Exception) {
-        Log.e("IOU", "Error: ${e.message}", e)
-    }
-}
-
 @Composable
 fun TestButton() {
     val scope = rememberCoroutineScope()
 
     Button(onClick = {
         scope.launch {
-            buttonClick()
         }
     }) {
         Text("ADD USER!")
