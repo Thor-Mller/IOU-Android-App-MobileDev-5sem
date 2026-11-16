@@ -1,4 +1,4 @@
-package com.example.iou.data
+package com.freaky.iou.data
 
 import com.google.firebase.dataconnect.generated.ExampleConnector
 import com.google.firebase.dataconnect.generated.execute

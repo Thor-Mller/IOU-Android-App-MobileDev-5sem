@@ -1,7 +1,7 @@
 
 # User table is keyed by Firebase Auth UID.
 type User @table {
-  id: String! # @default(expr: "auth.uid")
+  id: String! @default(expr: "auth.uid")
   username: String! @col(dataType: "varchar(50)")
   phone: String! @col(dataType: "varchar(50)")
   totalMissing: Float! @col(dataType: "numeric(10, 2)")

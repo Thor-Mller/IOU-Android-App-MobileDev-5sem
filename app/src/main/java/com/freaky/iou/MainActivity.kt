@@ -17,7 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.iou.data.ExpenseRepository
+import com.freaky.iou.data.ExpenseRepository
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
 import java.util.Date
