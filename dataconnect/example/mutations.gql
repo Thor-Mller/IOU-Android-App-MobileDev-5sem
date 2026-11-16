@@ -1,28 +1,29 @@
-# example/mutations.gql
-mutation UpsertCurrentUser(
-  $userId: String!
+# 1. Create the current user profile upon first sign-up
+mutation CreateCurrentUser(
   $username: String!
   $phone: String!
-) @auth(level: PUBLIC) {
-  user_upsert(
+  $email: String!
+) @auth(level: USER) {
+  user_insert(
     data: {
-      id: $userId
+      id_expr: "auth.uid"
       username: $username
       phone: $phone
+      email: $email
       totalMissing: 0.0
       totalDebt: 0.0
     }
   )
 }
 
+# 2. Create an expense owned by the signed-in Firebase user
 mutation CreateExpense(
-  $userId: String!
   $name: String!
   $amount: Float!
-) @auth(level: PUBLIC) {
+) @auth(level: USER) {
   expense_insert(
     data: {
-      userId: $userId
+      userId_expr: "auth.uid"
       name: $name
       amount: $amount
     }
@@ -34,10 +35,10 @@ mutation AddDebtorToExpense(
   $expenseId: UUID!
   $debtorUserId: String!
   $shareAmount: Float!
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
   query @redact {
     expense(key: { id: $expenseId })
-      @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can add debtors") {
+    @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can add debtors") {
       user {
         id
       }
@@ -52,11 +53,14 @@ mutation AddDebtorToExpense(
   )
 }
 
-# 5. Settle/remove a debtor's share (only allowed if the caller owns the expense)
-mutation SettleUserShare($expenseId: UUID!, $debtorUserId: String!) @auth(level: PUBLIC) {
+# 4. Settle/remove a debtor's share (only allowed if the caller owns the expense)
+mutation SettleUserShare(
+  $expenseId: UUID!
+  $debtorUserId: String!
+) @auth(level: USER) @transaction {
   query @redact {
     expense(key: { id: $expenseId })
-      @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can settle shares") {
+    @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can settle shares") {
       user {
         id
       }
@@ -70,11 +74,13 @@ mutation SettleUserShare($expenseId: UUID!, $debtorUserId: String!) @auth(level:
   )
 }
 
-# 6. Delete an expense (only allowed if the caller owns the expense)
-mutation DeleteExpense($expenseId: UUID!) @auth(level: PUBLIC) {
+# 5. Delete an expense (only allowed if the caller owns the expense)
+mutation DeleteExpense(
+  $expenseId: UUID!
+) @auth(level: USER) @transaction {
   query @redact {
     expense(key: { id: $expenseId })
-      @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can delete this expense") {
+    @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can delete this expense") {
       user {
         id
       }

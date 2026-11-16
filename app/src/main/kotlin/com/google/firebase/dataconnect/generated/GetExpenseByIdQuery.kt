@@ -92,6 +92,8 @@ public interface GetExpenseByIdQuery :
   
     val phone: String,
   
+    val email: String,
+  
   ) {
     
     

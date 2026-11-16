@@ -44,6 +44,8 @@ public interface ListUsersQuery :
   
     val phone: String,
   
+    val email: String,
+  
   ) {
     
     

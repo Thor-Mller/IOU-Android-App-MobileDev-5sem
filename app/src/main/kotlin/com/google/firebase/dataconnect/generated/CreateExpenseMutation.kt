@@ -25,8 +25,6 @@ public interface CreateExpenseMutation :
     @kotlinx.serialization.Serializable
   public data class Variables(
   
-    val userId: String,
-  
     val name: String,
   
     val amount: Double,
@@ -62,7 +60,7 @@ public interface CreateExpenseMutation :
 
 public fun CreateExpenseMutation.ref(
   
-    userId: String,name: String,amount: Double,
+    name: String,amount: Double,
 
   
   
@@ -73,7 +71,7 @@ public fun CreateExpenseMutation.ref(
   ref(
     
       CreateExpenseMutation.Variables(
-        userId=userId,name=name,amount=amount,
+        name=name,amount=amount,
   
       )
     
@@ -83,7 +81,7 @@ public suspend fun CreateExpenseMutation.execute(
 
   
     
-      userId: String,name: String,amount: Double,
+      name: String,amount: Double,
 
   
 
@@ -93,7 +91,7 @@ public suspend fun CreateExpenseMutation.execute(
   > =
   ref(
     
-      userId=userId,name=name,amount=amount,
+      name=name,amount=amount,
   
     
   ).execute()

@@ -515,6 +515,14 @@ input User_Data {
   """
   id_expr: String_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String!`)
+  """
+  email_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `User`.`phone` of type `String!`
   """
   phone: String
@@ -584,6 +592,10 @@ input User_Filter {
   """
   id: String_Filter
   """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
   ✨ Generated from Field `User`.`phone` of type `String!`
   """
   phone: String_Filter
@@ -649,6 +661,10 @@ input User_Having {
   ✨ Generated from Field `User`.`_count` of type `Int!`
   """
   _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
   """
   ✨ Generated from Field `User`.`id_count` of type `Int!`
   """
@@ -737,6 +753,10 @@ input User_Order {
   """
   id: OrderDirection
   """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
   ✨ Generated from Field `User`.`phone` of type `String!`
   """
   phone: OrderDirection
@@ -756,6 +776,10 @@ input User_Order {
   ✨ Generated from Field `User`.`_count` of type `Int!`
   """
   _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
   """
   ✨ Generated from Field `User`.`id_count` of type `Int!`
   """

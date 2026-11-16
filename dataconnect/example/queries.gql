@@ -4,6 +4,7 @@ query GetMyProfileAndExpenses @auth(level: PUBLIC) {
     id
     username
     phone
+    email
     totalMissing
     totalDebt
 
@@ -43,6 +44,7 @@ query ListUsers @auth(level: PUBLIC, insecureReason: "Authenticated users can br
     id
     username
     phone
+    email
   }
 }
 
@@ -53,12 +55,14 @@ query FindUser($search: String!) @auth(level: PUBLIC, insecureReason: "Authentic
       _or: [
         { username: { contains: $search } }
         { phone: { eq: $search } }
+        { email: {contains: $search }}
       ]
     }
   ) {
     id
     username
     phone
+    email
   }
 }
 
@@ -78,6 +82,7 @@ query GetExpenseById($expenseId: UUID!) @auth(level: PUBLIC, insecureReason: "Au
         id
         username
         phone
+        email
       }
     }
   }

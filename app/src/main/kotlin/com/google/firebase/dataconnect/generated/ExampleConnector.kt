@@ -21,6 +21,8 @@ public interface ExampleConnector : com.google.firebase.dataconnect.generated.Ge
   
     public val addDebtorToExpense: AddDebtorToExpenseMutation
   
+    public val createCurrentUser: CreateCurrentUserMutation
+  
     public val createExpense: CreateExpenseMutation
   
     public val deleteExpense: DeleteExpenseMutation
@@ -34,8 +36,6 @@ public interface ExampleConnector : com.google.firebase.dataconnect.generated.Ge
     public val listUsers: ListUsersQuery
   
     public val settleUserShare: SettleUserShareMutation
-  
-    public val upsertCurrentUser: UpsertCurrentUserMutation
   
 
   public companion object {
@@ -95,6 +95,10 @@ private class ExampleConnectorImpl(
       AddDebtorToExpenseMutationImpl(this)
     }
   
+    override val createCurrentUser by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      CreateCurrentUserMutationImpl(this)
+    }
+  
     override val createExpense by lazy(LazyThreadSafetyMode.PUBLICATION) {
       CreateExpenseMutationImpl(this)
     }
@@ -123,10 +127,6 @@ private class ExampleConnectorImpl(
       SettleUserShareMutationImpl(this)
     }
   
-    override val upsertCurrentUser by lazy(LazyThreadSafetyMode.PUBLICATION) {
-      UpsertCurrentUserMutationImpl(this)
-    }
-  
 
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
   override fun operations(): List<com.google.firebase.dataconnect.generated.GeneratedOperation<ExampleConnector, *, *>> =
@@ -136,10 +136,10 @@ private class ExampleConnectorImpl(
   override fun mutations(): List<com.google.firebase.dataconnect.generated.GeneratedMutation<ExampleConnector, *, *>> =
     listOf(
       addDebtorToExpense,
+        createCurrentUser,
         createExpense,
         deleteExpense,
         settleUserShare,
-        upsertCurrentUser,
         
     )
 
@@ -300,6 +300,21 @@ private class AddDebtorToExpenseMutationImpl(
   )
 
 
+private class CreateCurrentUserMutationImpl(
+  connector: ExampleConnector
+):
+  CreateCurrentUserMutation,
+  ExampleConnectorGeneratedMutationImpl<
+      CreateCurrentUserMutation.Data,
+      CreateCurrentUserMutation.Variables
+  >(
+    connector,
+    CreateCurrentUserMutation.Companion.operationName,
+    CreateCurrentUserMutation.Companion.dataDeserializer,
+    CreateCurrentUserMutation.Companion.variablesSerializer,
+  )
+
+
 private class CreateExpenseMutationImpl(
   connector: ExampleConnector
 ):
@@ -402,21 +417,6 @@ private class SettleUserShareMutationImpl(
     SettleUserShareMutation.Companion.operationName,
     SettleUserShareMutation.Companion.dataDeserializer,
     SettleUserShareMutation.Companion.variablesSerializer,
-  )
-
-
-private class UpsertCurrentUserMutationImpl(
-  connector: ExampleConnector
-):
-  UpsertCurrentUserMutation,
-  ExampleConnectorGeneratedMutationImpl<
-      UpsertCurrentUserMutation.Data,
-      UpsertCurrentUserMutation.Variables
-  >(
-    connector,
-    UpsertCurrentUserMutation.Companion.operationName,
-    UpsertCurrentUserMutation.Companion.dataDeserializer,
-    UpsertCurrentUserMutation.Companion.variablesSerializer,
   )
 
 

@@ -44,6 +44,8 @@ public interface GetMyProfileAndExpensesQuery :
   
     val phone: String,
   
+    val email: String,
+  
     val totalMissing: Double,
   
     val totalDebt: Double,

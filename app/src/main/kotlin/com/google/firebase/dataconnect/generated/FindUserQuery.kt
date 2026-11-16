@@ -54,6 +54,8 @@ public interface FindUserQuery :
   
     val phone: String,
   
+    val email: String,
+  
   ) {
     
     
