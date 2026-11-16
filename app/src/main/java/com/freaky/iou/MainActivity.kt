@@ -1,7 +1,6 @@
 package com.freaky.iou
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
-import java.util.Date
 
 class MainActivity : ComponentActivity() {
 
@@ -43,13 +41,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun TestButton() {
     val scope = rememberCoroutineScope()
 
     Button(onClick = {
-        scope.launch {
-        }
+        scope.launch {}
     }) {
         Text("ADD USER!")
     }
