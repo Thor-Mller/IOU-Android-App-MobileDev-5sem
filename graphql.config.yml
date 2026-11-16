@@ -1,0 +1,2 @@
+schema: 'dataconnect/schema/*.graphql'
+documents: 'dataconnect/**/*.graphql'
