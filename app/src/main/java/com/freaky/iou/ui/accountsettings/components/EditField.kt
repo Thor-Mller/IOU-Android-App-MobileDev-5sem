@@ -1,4 +1,4 @@
-package com.freaky.iou.ui.accountsettings.component
+package com.freaky.iou.ui.accountsettings.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
