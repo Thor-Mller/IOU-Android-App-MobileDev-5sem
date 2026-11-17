@@ -12,10 +12,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.freaky.iou.ui.accountsettings.viewmodels.AccountSettingsViewModel
+import com.freaky.iou.ui.accountsettings.views.NewAccountSettingsView
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
 
@@ -27,7 +30,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             IOUTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(
+                    val previewViewModel = remember {
+                        AccountSettingsViewModel(
+                        )
+                    }
+                    NewAccountSettingsView(previewViewModel)
+                    /*Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
@@ -35,7 +43,7 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center
                     ) {
                         TestButton()
-                    }
+                    }*/
                 }
             }
         }

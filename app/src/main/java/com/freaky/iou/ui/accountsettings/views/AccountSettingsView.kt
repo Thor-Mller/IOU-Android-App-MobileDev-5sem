@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.freaky.iou.ui.accountsettings.components.DropdownField
 import com.freaky.iou.ui.accountsettings.components.EditField
 import com.freaky.iou.ui.accountsettings.viewmodels.AccountSettingsViewModel
 import com.freaky.iou.ui.theme.IOUTheme
@@ -47,6 +48,7 @@ fun NewAccountSettingsView(
             EditField("Username", state.username)
             EditField("Phone number", state.phone)
             EditField("Email", state.email)
+            DropdownField("Currency", "DKK")
         }
     }
 }
