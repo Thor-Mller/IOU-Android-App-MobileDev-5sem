@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.freaky.iou.data.Database
+import com.freaky.iou.ui.data.Database
 import com.freaky.iou.ui.data.models.User
 import com.freaky.iou.ui.expense.NewExpenseViewModel
 import com.freaky.iou.ui.payment.views.NewExpenseScreen

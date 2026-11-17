@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.freaky.iou.data.Database
+import com.freaky.iou.ui.data.Database
 import com.freaky.iou.domain.model.Expense
 import com.google.firebase.dataconnect.generated.SearchUsersInGroupQuery
 import kotlinx.coroutines.launch

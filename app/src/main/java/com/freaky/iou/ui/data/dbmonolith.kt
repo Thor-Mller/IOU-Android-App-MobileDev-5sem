@@ -1,4 +1,4 @@
-package com.freaky.iou.data
+package com.freaky.iou.ui.data
 
 import com.freaky.iou.ui.data.models.User
 import com.google.firebase.dataconnect.generated.ExampleConnector
