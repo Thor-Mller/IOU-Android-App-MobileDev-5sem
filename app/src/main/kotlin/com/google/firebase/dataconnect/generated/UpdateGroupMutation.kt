@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface UpdateGroupMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       UpdateGroupMutation.Data,
       UpdateGroupMutation.Variables

@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface DeleteExpenseMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       DeleteExpenseMutation.Data,
       DeleteExpenseMutation.Variables
@@ -36,6 +36,8 @@ public interface DeleteExpenseMutation :
   
     @kotlinx.serialization.Serializable
   public data class Data(
+  
+    val expenseProvider_deleteMany: Int,
   
     val expense_delete: ExpenseKey?,
   

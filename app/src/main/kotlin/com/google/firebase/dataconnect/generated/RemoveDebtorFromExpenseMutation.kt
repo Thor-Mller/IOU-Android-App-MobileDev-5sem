@@ -14,11 +14,11 @@ package com.google.firebase.dataconnect.generated
 
 
 
-public interface SettleUserShareMutation :
-    GeneratedMutation<
+public interface RemoveDebtorFromExpenseMutation :
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
-      SettleUserShareMutation.Data,
-      SettleUserShareMutation.Variables
+      RemoveDebtorFromExpenseMutation.Data,
+      RemoveDebtorFromExpenseMutation.Variables
     >
 {
   
@@ -48,7 +48,7 @@ public interface SettleUserShareMutation :
   
 
   public companion object {
-    public val operationName: String = "SettleUserShare"
+    public val operationName: String = "RemoveDebtorFromExpense"
 
     public val dataDeserializer: kotlinx.serialization.DeserializationStrategy<Data> =
       kotlinx.serialization.serializer()
@@ -58,26 +58,26 @@ public interface SettleUserShareMutation :
   }
 }
 
-public fun SettleUserShareMutation.ref(
+public fun RemoveDebtorFromExpenseMutation.ref(
   
     expenseId: java.util.UUID,debtorUserId: String,
 
   
   
 ): com.google.firebase.dataconnect.MutationRef<
-    SettleUserShareMutation.Data,
-    SettleUserShareMutation.Variables
+    RemoveDebtorFromExpenseMutation.Data,
+    RemoveDebtorFromExpenseMutation.Variables
   > =
   ref(
     
-      SettleUserShareMutation.Variables(
+      RemoveDebtorFromExpenseMutation.Variables(
         expenseId=expenseId,debtorUserId=debtorUserId,
   
       )
     
   )
 
-public suspend fun SettleUserShareMutation.execute(
+public suspend fun RemoveDebtorFromExpenseMutation.execute(
 
   
     
@@ -86,8 +86,8 @@ public suspend fun SettleUserShareMutation.execute(
   
 
   ): com.google.firebase.dataconnect.MutationResult<
-    SettleUserShareMutation.Data,
-    SettleUserShareMutation.Variables
+    RemoveDebtorFromExpenseMutation.Data,
+    RemoveDebtorFromExpenseMutation.Variables
   > =
   ref(
     

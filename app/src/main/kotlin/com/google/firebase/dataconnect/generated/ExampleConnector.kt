@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 import com.google.firebase.dataconnect.getInstance as _fdcGetInstance
 import kotlin.time.Duration.Companion.milliseconds as _milliseconds
 
-public interface ExampleConnector : GeneratedConnector<ExampleConnector> {
+public interface ExampleConnector : com.google.firebase.dataconnect.generated.GeneratedConnector<ExampleConnector> {
   override val dataConnect: com.google.firebase.dataconnect.FirebaseDataConnect
 
   
@@ -28,6 +28,8 @@ public interface ExampleConnector : GeneratedConnector<ExampleConnector> {
     public val createExpense: CreateExpenseMutation
   
     public val createGroup: CreateGroupMutation
+  
+    public val deleteCurrentUser: DeleteCurrentUserMutation
   
     public val deleteExpense: DeleteExpenseMutation
   
@@ -45,11 +47,11 @@ public interface ExampleConnector : GeneratedConnector<ExampleConnector> {
   
     public val listUsers: ListUsersQuery
   
+    public val removeDebtorFromExpense: RemoveDebtorFromExpenseMutation
+  
     public val removeUserFromGroup: RemoveUserFromGroupMutation
   
     public val searchUsersInGroup: SearchUsersInGroupQuery
-  
-    public val settleUserShare: SettleUserShareMutation
   
     public val updateGroup: UpdateGroupMutation
   
@@ -127,6 +129,10 @@ private class ExampleConnectorImpl(
       CreateGroupMutationImpl(this)
     }
   
+    override val deleteCurrentUser by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      DeleteCurrentUserMutationImpl(this)
+    }
+  
     override val deleteExpense by lazy(LazyThreadSafetyMode.PUBLICATION) {
       DeleteExpenseMutationImpl(this)
     }
@@ -159,6 +165,10 @@ private class ExampleConnectorImpl(
       ListUsersQueryImpl(this)
     }
   
+    override val removeDebtorFromExpense by lazy(LazyThreadSafetyMode.PUBLICATION) {
+      RemoveDebtorFromExpenseMutationImpl(this)
+    }
+  
     override val removeUserFromGroup by lazy(LazyThreadSafetyMode.PUBLICATION) {
       RemoveUserFromGroupMutationImpl(this)
     }
@@ -167,37 +177,34 @@ private class ExampleConnectorImpl(
       SearchUsersInGroupQueryImpl(this)
     }
   
-    override val settleUserShare by lazy(LazyThreadSafetyMode.PUBLICATION) {
-      SettleUserShareMutationImpl(this)
-    }
-  
     override val updateGroup by lazy(LazyThreadSafetyMode.PUBLICATION) {
       UpdateGroupMutationImpl(this)
     }
   
 
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
-  override fun operations(): List<GeneratedOperation<ExampleConnector, *, *>> =
+  override fun operations(): List<com.google.firebase.dataconnect.generated.GeneratedOperation<ExampleConnector, *, *>> =
     queries() + mutations()
 
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
-  override fun mutations(): List<GeneratedMutation<ExampleConnector, *, *>> =
+  override fun mutations(): List<com.google.firebase.dataconnect.generated.GeneratedMutation<ExampleConnector, *, *>> =
     listOf(
       addDebtorToExpense,
         addUserToGroup,
         createCurrentUser,
         createExpense,
         createGroup,
+        deleteCurrentUser,
         deleteExpense,
         deleteGroup,
+        removeDebtorFromExpense,
         removeUserFromGroup,
-        settleUserShare,
         updateGroup,
         
     )
 
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
-  override fun queries(): List<GeneratedQuery<ExampleConnector, *, *>> =
+  override fun queries(): List<com.google.firebase.dataconnect.generated.GeneratedQuery<ExampleConnector, *, *>> =
     listOf(
       findUser,
         getCurrentUser,
@@ -234,7 +241,7 @@ private open class ExampleConnectorGeneratedQueryImpl<Data, Variables>(
   override val operationName: String,
   override val dataDeserializer: kotlinx.serialization.DeserializationStrategy<Data>,
   override val variablesSerializer: kotlinx.serialization.SerializationStrategy<Variables>,
-) : GeneratedQuery<ExampleConnector, Data, Variables> {
+) : com.google.firebase.dataconnect.generated.GeneratedQuery<ExampleConnector, Data, Variables> {
 
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
   override fun copy(
@@ -289,7 +296,7 @@ private open class ExampleConnectorGeneratedMutationImpl<Data, Variables>(
   override val operationName: String,
   override val dataDeserializer: kotlinx.serialization.DeserializationStrategy<Data>,
   override val variablesSerializer: kotlinx.serialization.SerializationStrategy<Variables>,
-) : GeneratedMutation<ExampleConnector, Data, Variables> {
+) : com.google.firebase.dataconnect.generated.GeneratedMutation<ExampleConnector, Data, Variables> {
 
   @com.google.firebase.dataconnect.ExperimentalFirebaseDataConnect
   override fun copy(
@@ -416,6 +423,21 @@ private class CreateGroupMutationImpl(
   )
 
 
+private class DeleteCurrentUserMutationImpl(
+  connector: ExampleConnector
+):
+  DeleteCurrentUserMutation,
+  ExampleConnectorGeneratedMutationImpl<
+      DeleteCurrentUserMutation.Data,
+      Unit
+  >(
+    connector,
+    DeleteCurrentUserMutation.Companion.operationName,
+    DeleteCurrentUserMutation.Companion.dataDeserializer,
+    DeleteCurrentUserMutation.Companion.variablesSerializer,
+  )
+
+
 private class DeleteExpenseMutationImpl(
   connector: ExampleConnector
 ):
@@ -536,6 +558,21 @@ private class ListUsersQueryImpl(
   )
 
 
+private class RemoveDebtorFromExpenseMutationImpl(
+  connector: ExampleConnector
+):
+  RemoveDebtorFromExpenseMutation,
+  ExampleConnectorGeneratedMutationImpl<
+      RemoveDebtorFromExpenseMutation.Data,
+      RemoveDebtorFromExpenseMutation.Variables
+  >(
+    connector,
+    RemoveDebtorFromExpenseMutation.Companion.operationName,
+    RemoveDebtorFromExpenseMutation.Companion.dataDeserializer,
+    RemoveDebtorFromExpenseMutation.Companion.variablesSerializer,
+  )
+
+
 private class RemoveUserFromGroupMutationImpl(
   connector: ExampleConnector
 ):
@@ -563,21 +600,6 @@ private class SearchUsersInGroupQueryImpl(
     SearchUsersInGroupQuery.Companion.operationName,
     SearchUsersInGroupQuery.Companion.dataDeserializer,
     SearchUsersInGroupQuery.Companion.variablesSerializer,
-  )
-
-
-private class SettleUserShareMutationImpl(
-  connector: ExampleConnector
-):
-  SettleUserShareMutation,
-  ExampleConnectorGeneratedMutationImpl<
-      SettleUserShareMutation.Data,
-      SettleUserShareMutation.Variables
-  >(
-    connector,
-    SettleUserShareMutation.Companion.operationName,
-    SettleUserShareMutation.Companion.dataDeserializer,
-    SettleUserShareMutation.Companion.variablesSerializer,
   )
 
 

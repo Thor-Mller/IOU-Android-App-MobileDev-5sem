@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface CreateCurrentUserMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       CreateCurrentUserMutation.Data,
       CreateCurrentUserMutation.Variables

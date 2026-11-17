@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface DeleteGroupMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       DeleteGroupMutation.Data,
       DeleteGroupMutation.Variables
@@ -36,6 +36,10 @@ public interface DeleteGroupMutation :
   
     @kotlinx.serialization.Serializable
   public data class Data(
+  
+    val expenseProvider_deleteMany: Int,
+  
+    val expense_deleteMany: Int,
   
     val groupUser_deleteMany: Int,
   

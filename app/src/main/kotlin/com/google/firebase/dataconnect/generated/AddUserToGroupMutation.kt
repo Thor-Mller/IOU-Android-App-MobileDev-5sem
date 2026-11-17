@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface AddUserToGroupMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       AddUserToGroupMutation.Data,
       AddUserToGroupMutation.Variables

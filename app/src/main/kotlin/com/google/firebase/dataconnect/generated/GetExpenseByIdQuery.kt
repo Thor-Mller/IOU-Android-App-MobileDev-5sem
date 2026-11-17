@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map as _flow_map
 
 
 public interface GetExpenseByIdQuery :
-    GeneratedQuery<
+    com.google.firebase.dataconnect.generated.GeneratedQuery<
       ExampleConnector,
       GetExpenseByIdQuery.Data,
       GetExpenseByIdQuery.Variables

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map as _flow_map
 
 
 public interface GetCurrentUserQuery :
-    GeneratedQuery<
+    com.google.firebase.dataconnect.generated.GeneratedQuery<
       ExampleConnector,
       GetCurrentUserQuery.Data,
       Unit

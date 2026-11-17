@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface RemoveUserFromGroupMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       RemoveUserFromGroupMutation.Data,
       RemoveUserFromGroupMutation.Variables

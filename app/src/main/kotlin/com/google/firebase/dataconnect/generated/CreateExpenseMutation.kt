@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface CreateExpenseMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       CreateExpenseMutation.Data,
       CreateExpenseMutation.Variables

@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface CreateGroupMutation :
-    GeneratedMutation<
+    com.google.firebase.dataconnect.generated.GeneratedMutation<
       ExampleConnector,
       CreateGroupMutation.Data,
       CreateGroupMutation.Variables
@@ -37,7 +37,9 @@ public interface CreateGroupMutation :
     @kotlinx.serialization.Serializable
   public data class Data(
   
-    val group_insert: GroupKey,
+    val group: GroupKey,
+  
+    val groupUser_insert: GroupUserKey,
   
   ) {
     
