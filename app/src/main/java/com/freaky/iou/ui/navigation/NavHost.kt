@@ -11,6 +11,8 @@ import androidx.navigation.compose.rememberNavController
 import com.freaky.iou.ui.auth.UserViewModel
 import com.freaky.iou.ui.auth.login.LoginScreen
 import com.freaky.iou.ui.auth.signup.SignupScreen
+import com.freaky.iou.ui.group.viewmodels.NewGroupViewModel
+import com.freaky.iou.ui.group.views.NewGroupScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -69,6 +71,18 @@ fun AppNavigation() {
                     navController.navigate(LoginRoute)
                 })
             }
+        }
+
+        composable<NewGroupRoute> {
+            val newGroupViewModel: NewGroupViewModel = viewModel()
+            NewGroupScreen(
+                viewModel = newGroupViewModel,
+                onCancel = { navController.navigateUp() },
+                onCreate = { group ->
+                    // TODO: save the group and send invites once the backend has a Group table
+                    navController.navigateUp()
+                }
+            )
         }
 
     }
