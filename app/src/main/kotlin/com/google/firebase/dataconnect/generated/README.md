@@ -80,9 +80,9 @@ val connector: ExampleConnector = ExampleConnector.getInstance(
 ### ExampleConnector - Query and Mutation Properties
 
 The `example` Data Connect connector defines
-4 queries and
-5 mutations,
-a total of 9 operations.
+7 queries and
+10 mutations,
+a total of 17 operations.
 Each of these operations is exposed
 as a property of [ExampleConnector].
 
@@ -172,15 +172,15 @@ last argument of the `execute()` method.
 If a query has no variables then it can be easily executed
 by calling the `execute()` method with no arguments.
 
-For example, the "GetMyProfileAndExpenses" query has no variables
+For example, the "GetCurrentUser" query has no variables
 and can be executed via the
-[ExampleConnector.getMyProfileAndExpenses]
+[ExampleConnector.getCurrentUser]
 property as follows:
 
 ```kotlin
 val connector = ExampleConnector.instance
-val queryResult = connector.getMyProfileAndExpenses.execute()
-println("GetMyProfileAndExpenses query returned: ${queryResult.data}")
+val queryResult = connector.getCurrentUser.execute()
+println("GetCurrentUser query returned: ${queryResult.data}")
 ```
 
 
@@ -189,14 +189,14 @@ println("GetMyProfileAndExpenses query returned: ${queryResult.data}")
 If a query has _required_ variables then they must be specified as
 arguments to the `execute()` method.
 
-For example, the "FindUser" query has 1 required variable ("search")
-and can be executed via the [ExampleConnector.findUser]
+For example, the "SearchUsersInGroup" query has 2 required variables ("groupId" and "search")
+and can be executed via the [ExampleConnector.searchUsersInGroup]
 property as follows:
 
 ```kotlin
 val connector = ExampleConnector.instance
-val queryResult = connector.findUser.execute(search="qux")
-println("FindUser query returned: ${queryResult.data}")
+val queryResult = connector.searchUsersInGroup.execute(groupId=java.util.UUID.randomUUID(), search="qux")
+println("SearchUsersInGroup query returned: ${queryResult.data}")
 ```
 
 
