@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.freaky.iou.ui.auth.UserViewModel
 import com.freaky.iou.ui.auth.login.LoginScreen
 import com.freaky.iou.ui.auth.signup.SignupScreen
+import com.freaky.iou.ui.splash.SplashScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -53,7 +54,12 @@ fun AppNavigation() {
 
     ) {
 
-        navigation<AuthGraph>(startDestination = LoginRoute) {
+        navigation<AuthGraph>(startDestination = SplashRoute) {
+            composable<SplashRoute> {
+                SplashScreen(onGoToApp = {
+                    navController.navigate(LoginRoute)
+                })
+            }
             composable<LoginRoute> {
                 LoginScreen(onNavigateToSignup = {
                     navController.navigate(SignupRoute)
