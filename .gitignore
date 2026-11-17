@@ -14,3 +14,11 @@
 .cxx
 local.properties
 google-services.json
+
+### JetBrains ###
+.idea/
+.idea/*
+*.iml
+*.iws
+*.ipr
+out/
