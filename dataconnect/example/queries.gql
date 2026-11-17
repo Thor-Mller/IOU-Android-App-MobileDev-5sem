@@ -48,6 +48,17 @@ query ListUsers @auth(level: PUBLIC, insecureReason: "Authenticated users can br
   }
 }
 
+query GetCurrentUser @auth(level: USER) {
+  user(key: { id_expr: "auth.uid" }) {
+    id
+    username
+    phone
+    email
+    totalMissing
+    totalDebt
+  }
+}
+
 # 3. Search for a user by username or phone number
 query FindUser($search: String!) @auth(level: PUBLIC, insecureReason: "Authenticated users can search for users by username or phone") {
   users(
@@ -87,3 +98,48 @@ query GetExpenseById($expenseId: UUID!) @auth(level: PUBLIC, insecureReason: "Au
     }
   }
 }
+
+query GetUsersInGroup($groupId: UUID!) @auth(level: USER) {
+  groupUsers(where: { groupId: { eq: $groupId } }) {
+    user {
+      id
+      username
+      email
+      phone
+      totalMissing
+      totalDebt
+    }
+  }
+}
+
+query SearchUsersInGroup(
+  $groupId: UUID!
+  $search: String!
+) @auth(level: USER) {
+  groupUsers(
+    where: {
+      _and: [
+        { groupId: { eq: $groupId } }
+        {
+          user: {
+            _or: [
+              { username: { contains: $search } }
+              { email: { contains: $search } }
+              { phone: { contains: $search } }
+            ]
+          }
+        }
+      ]
+    }
+  ) {
+    user {
+      id
+      username
+      email
+      phone
+      totalMissing
+      totalDebt
+    }
+  }
+}
+

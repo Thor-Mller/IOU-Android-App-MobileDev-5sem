@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface CreateExpenseMutation :
-    com.google.firebase.dataconnect.generated.GeneratedMutation<
+    GeneratedMutation<
       ExampleConnector,
       CreateExpenseMutation.Data,
       CreateExpenseMutation.Variables
@@ -28,6 +28,8 @@ public interface CreateExpenseMutation :
     val name: String,
   
     val amount: Double,
+  
+    val groupId: @kotlinx.serialization.Serializable(with = com.google.firebase.dataconnect.serializers.UUIDSerializer::class) java.util.UUID,
   
   ) {
     
@@ -60,7 +62,7 @@ public interface CreateExpenseMutation :
 
 public fun CreateExpenseMutation.ref(
   
-    name: String,amount: Double,
+    name: String,amount: Double,groupId: java.util.UUID,
 
   
   
@@ -71,7 +73,7 @@ public fun CreateExpenseMutation.ref(
   ref(
     
       CreateExpenseMutation.Variables(
-        name=name,amount=amount,
+        name=name,amount=amount,groupId=groupId,
   
       )
     
@@ -81,7 +83,7 @@ public suspend fun CreateExpenseMutation.execute(
 
   
     
-      name: String,amount: Double,
+      name: String,amount: Double,groupId: java.util.UUID,
 
   
 
@@ -91,7 +93,7 @@ public suspend fun CreateExpenseMutation.execute(
   > =
   ref(
     
-      name=name,amount=amount,
+      name=name,amount=amount,groupId=groupId,
   
     
   ).execute()

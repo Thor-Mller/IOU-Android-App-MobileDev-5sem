@@ -37,7 +37,7 @@ fun SignupScreen(
     onNavigateToLogin: () -> Unit = {},
     onSignupSuccess: (String) -> Unit = {},
 ) {
-    val state = viewModel.state;
+    val state = viewModel.state
 
     Surface(
         modifier = Modifier.fillMaxSize(),

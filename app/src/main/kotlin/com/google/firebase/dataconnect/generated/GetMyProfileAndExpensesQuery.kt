@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map as _flow_map
 
 
 public interface GetMyProfileAndExpensesQuery :
-    com.google.firebase.dataconnect.generated.GeneratedQuery<
+    GeneratedQuery<
       ExampleConnector,
       GetMyProfileAndExpensesQuery.Data,
       Unit
