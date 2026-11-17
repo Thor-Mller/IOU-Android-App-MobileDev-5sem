@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface CreateCurrentUserMutation :
-    com.google.firebase.dataconnect.generated.GeneratedMutation<
+    GeneratedMutation<
       ExampleConnector,
       CreateCurrentUserMutation.Data,
       CreateCurrentUserMutation.Variables
@@ -41,7 +41,7 @@ public interface CreateCurrentUserMutation :
     @kotlinx.serialization.Serializable
   public data class Data(
   
-    val user_insert: UserKey,
+    val user_upsert: UserKey,
   
   ) {
     

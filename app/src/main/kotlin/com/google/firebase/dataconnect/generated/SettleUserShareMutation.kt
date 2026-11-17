@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface SettleUserShareMutation :
-    com.google.firebase.dataconnect.generated.GeneratedMutation<
+    GeneratedMutation<
       ExampleConnector,
       SettleUserShareMutation.Data,
       SettleUserShareMutation.Variables

@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface AddDebtorToExpenseMutation :
-    com.google.firebase.dataconnect.generated.GeneratedMutation<
+    GeneratedMutation<
       ExampleConnector,
       AddDebtorToExpenseMutation.Data,
       AddDebtorToExpenseMutation.Variables
