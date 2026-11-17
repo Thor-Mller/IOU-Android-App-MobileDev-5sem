@@ -4,7 +4,7 @@ mutation CreateCurrentUser(
   $phone: String!
   $email: String!
 ) @auth(level: USER) {
-  user_insert(
+  user_upsert(
     data: {
       id_expr: "auth.uid"
       username: $username
@@ -20,12 +20,14 @@ mutation CreateCurrentUser(
 mutation CreateExpense(
   $name: String!
   $amount: Float!
+  $groupId: UUID!
 ) @auth(level: USER) {
   expense_insert(
     data: {
       userId_expr: "auth.uid"
       name: $name
       amount: $amount
+      groupId: $groupId
     }
   )
 }
@@ -87,4 +89,53 @@ mutation DeleteExpense(
     }
   }
   expense_delete(key: { id: $expenseId })
+}
+
+mutation CreateGroup($name: String!) @auth(level: USER) {
+  group_insert(
+    data: {
+      name: $name
+    }
+  )
+}
+
+mutation UpdateGroup(
+  $groupId: UUID!
+  $name: String!
+) @auth(level: USER) {
+  group_update(
+    key: { id: $groupId }
+    data: {
+      name: $name
+    }
+  )
+}
+
+mutation DeleteGroup($groupId: UUID!) @auth(level: USER) {
+  groupUser_deleteMany(where: { groupId: { eq: $groupId } })
+  group_delete(key: { id: $groupId })
+}
+
+mutation AddUserToGroup(
+  $groupId: UUID!
+  $userId: String!
+) @auth(level: USER) {
+  groupUser_insert(
+    data: {
+      groupId: $groupId
+      userId: $userId
+    }
+  )
+}
+
+mutation RemoveUserFromGroup(
+  $groupId: UUID!
+  $userId: String!
+) @auth(level: USER) {
+  groupUser_delete(
+    key: {
+      groupId: $groupId
+      userId: $userId
+    }
+  )
 }

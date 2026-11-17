@@ -41,7 +41,7 @@ public interface CreateCurrentUserMutation :
     @kotlinx.serialization.Serializable
   public data class Data(
   
-    val user_insert: UserKey,
+    val user_upsert: UserKey,
   
   ) {
     

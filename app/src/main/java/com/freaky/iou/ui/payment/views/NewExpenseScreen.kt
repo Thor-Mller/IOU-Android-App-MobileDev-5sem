@@ -1,7 +1,7 @@
 package com.freaky.iou.ui.payment.views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,17 +13,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -31,11 +42,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,8 +58,13 @@ import com.freaky.iou.domain.model.Expense
 import com.freaky.iou.ui.expense.NewExpenseViewModel
 import com.freaky.iou.ui.payment.components.NumberField
 import com.freaky.iou.ui.theme.IOUTheme
+import java.util.UUID
 import kotlin.math.roundToInt
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 
+@OptIn(FlowPreview::class)
 @Composable
 fun NewExpenseScreen(
     viewModel: NewExpenseViewModel,
@@ -56,11 +72,13 @@ fun NewExpenseScreen(
     onCreate: (Expense) -> Unit = {}
 ) {
     val state = viewModel.uiState
-
+    val searchPeopleState = rememberTextFieldState("")
     val titleState = rememberTextFieldState(state.title)
     val amountState = rememberTextFieldState(
         if (state.totalAmount > 0.0) state.totalAmount.roundToInt().toString() else ""
     )
+    // Maps userId -> username so the split table displays names instead of raw UIDs
+    val memberNames = remember { mutableStateMapOf<String, String>() }
 
     LaunchedEffect(titleState) {
         snapshotFlow { titleState.text.toString() }
@@ -70,6 +88,19 @@ fun NewExpenseScreen(
     LaunchedEffect(amountState) {
         snapshotFlow { amountState.text.toString() }
             .collect { viewModel.onTotalAmountTextChange(it) }
+    }
+
+    // Debounced search for users in the group by username, email, or phone
+    LaunchedEffect(viewModel.uiState.groupId, searchPeopleState) {
+        snapshotFlow { searchPeopleState.text.toString() }
+            .debounce(300)
+            .distinctUntilChanged()
+            .collect { query ->
+                if (viewModel.selectedSearchUser?.username != query) {
+                    viewModel.clearUserSearch()
+                    viewModel.searchUsersInGroup(viewModel.uiState.groupId, query)
+                }
+            }
     }
 
     Surface(
@@ -138,7 +169,7 @@ fun NewExpenseScreen(
                 textAlign = TextAlign.Start
             )
 
-            // Split Mode / Hint (matching mockup)
+            // Split Mode / Hint
             Text(
                 text = "Enter percentages for each member.",
                 style = MaterialTheme.typography.bodyMedium,
@@ -146,6 +177,59 @@ fun NewExpenseScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
             )
+
+            // Search People & Add Button (around line 155)
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        state = searchPeopleState,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp),
+                        label = { Text("Add people to expense") },
+                        lineLimits = TextFieldLineLimits.SingleLine
+                    )
+                    Button(
+                        onClick = {
+                            viewModel.selectedSearchUser?.let { selectedUser ->
+                                viewModel.addDebtor(selectedUser.id, selectedUser.username)
+                                searchPeopleState.clearText()
+                                viewModel.clearUserSearch()
+                            }
+                        },
+                        enabled = !viewModel.isSaving && viewModel.selectedSearchUser != null,
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("Add", fontSize = 16.sp)
+                    }
+                }
+
+                // Matching Group Members Dropdown
+                if (viewModel.searchResults.isNotEmpty()) {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Column {
+                            viewModel.searchResults.forEach { user ->
+                                ListItem(
+                                    headlineContent = { Text(user.username) },
+                                    supportingContent = { Text("${user.email} • ${user.phone}") },
+                                    modifier = Modifier.clickable {
+                                        searchPeopleState.setTextAndPlaceCursorAtEnd(user.username)
+                                        viewModel.selectSearchUser(user)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
             // 4. Split Table Box
             Column(
@@ -183,17 +267,21 @@ fun NewExpenseScreen(
                 }
 
                 // Member Rows
-                state.members.forEach { memberId ->
+                state.getMembers().forEach { memberId ->
                     val percentage = state.memberPercentages[memberId] ?: 0f
                     val amountOwed = state.amountForMember(memberId)
+                    val displayName = state.memberNamesToIds
+                        .entries
+                        .firstOrNull { it.value == memberId }
+                        ?.key ?: memberId
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Member Name / ID
+                        // Member Username (falls back to memberId for pre-populated members)
                         Text(
-                            text = memberId,
+                            text = displayName,
                             modifier = Modifier.weight(1.5f),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
@@ -231,6 +319,21 @@ fun NewExpenseScreen(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Normal
                         )
+                        IconButton(
+                            onClick = {
+                                memberNames.remove(memberId)
+                                viewModel.removeDebtor(memberId)
+                            },
+                            enabled = !viewModel.isSaving,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Remove $displayName",
+                                tint = Color.DarkGray,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
 
@@ -262,10 +365,20 @@ fun NewExpenseScreen(
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
+                    Spacer(modifier = Modifier.width(32.dp))
                 }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+
+            viewModel.errorMessage?.let { message ->
+                Text(
+                    text = message,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
             // 5. Actions (Cancel / Confirm)
             Row(
@@ -274,6 +387,7 @@ fun NewExpenseScreen(
             ) {
                 OutlinedButton(
                     onClick = onCancel,
+                    enabled = !viewModel.isSaving,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
@@ -283,15 +397,26 @@ fun NewExpenseScreen(
 
                 Button(
                     onClick = {
-                        if (state.isSplitValid && state.title.isNotBlank()) {
-                            onCreate(state)
-                        }
+                        viewModel.submitExpense(onSuccess = onCreate)
                     },
-                    enabled = state.isSplitValid && state.title.isNotBlank() && state.totalAmount > 0.0,
+                    enabled = !viewModel.isSaving &&
+                            state.isSplitValid &&
+                            state.title.isNotBlank() &&
+                            state.totalAmount > 0.0,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("Confirm", fontSize = 18.sp)
+                    if (viewModel.isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .height(22.dp)
+                                .width(22.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text("Confirm", fontSize = 18.sp)
+                    }
                 }
             }
         }
@@ -306,6 +431,7 @@ fun NewExpenseScreenPreview() {
             NewExpenseViewModel(
                 initialTitle = "Groceries",
                 initialAmount = 300.0,
+                initialGroupId = UUID.randomUUID(),
                 initialMembers = listOf("Person 1", "Person 2", "Person 3")
             ).apply {
                 onMemberPercentageChange("Person 1", 50f)
