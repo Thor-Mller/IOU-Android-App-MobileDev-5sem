@@ -57,7 +57,10 @@ fun AppNavigation() {
         navigation<AuthGraph>(startDestination = SplashRoute) {
             composable<SplashRoute> {
                 SplashScreen(onGoToApp = {
-                    navController.navigate(LoginRoute)
+                    navController.navigate(LoginRoute) {
+                        // Fjern splash fra back-stacken, så man ikke kan gå tilbage til den
+                        popUpTo(SplashRoute) { inclusive = true }
+                    }
                 })
             }
             composable<LoginRoute> {
