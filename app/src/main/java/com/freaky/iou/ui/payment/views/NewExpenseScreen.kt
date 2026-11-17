@@ -54,7 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.freaky.iou.domain.model.Expense
+import com.freaky.iou.ui.payment.models.Expense
 import com.freaky.iou.ui.expense.NewExpenseViewModel
 import com.freaky.iou.ui.payment.components.NumberField
 import com.freaky.iou.ui.theme.IOUTheme

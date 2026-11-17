@@ -1,4 +1,4 @@
-package com.freaky.iou.domain.model
+package com.freaky.iou.ui.payment.models
 
 import java.util.UUID
 import kotlin.math.roundToInt

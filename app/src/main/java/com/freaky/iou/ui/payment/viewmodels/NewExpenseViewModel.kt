@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.freaky.iou.ui.data.Database
-import com.freaky.iou.domain.model.Expense
+import com.freaky.iou.ui.payment.models.Expense
 import com.google.firebase.dataconnect.generated.SearchUsersInGroupQuery
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -37,14 +37,6 @@ class NewExpenseViewModel(
             },
         ))
         private set
-
-    fun setGroupId(groupId: UUID) {
-        if (uiState.groupId != groupId) {
-            uiState = uiState.copy(groupId = groupId)
-        }
-        loadGroupMembers(groupId)
-    }
-
     fun loadGroupMembers(groupId: UUID) {
         viewModelScope.launch {
             Database.getUsersInGroup(groupId).onSuccess { users ->
@@ -73,10 +65,6 @@ class NewExpenseViewModel(
 
     fun onTitleChange(newTitle: String) {
         uiState = uiState.copy(title = newTitle)
-    }
-
-    fun onTotalAmountChange(newAmount: Double) {
-        uiState = uiState.copy(totalAmount = newAmount)
     }
 
     fun onTotalAmountTextChange(text: String) {

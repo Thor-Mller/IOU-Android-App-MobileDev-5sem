@@ -1,4 +1,4 @@
-package com.freaky.iou.ui.payment
+package com.freaky.iou.ui.payment.test
 
 import android.os.Bundle
 import android.util.Log

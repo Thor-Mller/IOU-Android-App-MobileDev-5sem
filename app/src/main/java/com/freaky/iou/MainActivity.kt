@@ -16,8 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.freaky.iou.ui.expense.NewExpenseViewModel
-import com.freaky.iou.ui.payment.views.NewExpenseScreen
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
 

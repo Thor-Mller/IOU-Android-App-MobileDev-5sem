@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.freaky.iou.ui.payment.PaymentActivityTest"
+            android:name="com.freaky.iou.ui.payment.test.PaymentActivityTest"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.IOU"
