@@ -12,6 +12,9 @@ object LoginRoute
 object SignupRoute
 
 @Serializable
+object ReAuthRoute
+
+@Serializable
 object HomeRoute
 
 @Serializable
