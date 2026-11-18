@@ -1,0 +1,51 @@
+I1113 09:35:57.658041   35388 load.go:31] Reloading schema and connectors...
+I1113 09:35:57.676422   35388 control.go:90] [projects/emulator/locations/emulator/services/iou-android-app-mobiledev-5sem 243c] UpdateResources(): done
+Main schema: sources: schema/schema.gql [594B] 
+Connector "example": sources: example/mutations.gql [2077B] example/queries.gql [1809B] 
+I1113 09:35:57.694137   35388 codegen.go:102] [connector "example" kotlinSdk] Generating sources into "C:\\Programmering\\IOU-Android-App-MobileDev-5sem\\app\\src\\main\\kotlin\\com\\google\\firebase\\dataconnect\\generated"
+I1113 09:35:57.702051   35388 collector.go:107] schema extensions wrote into "C:\\Programmering\\IOU-Android-App-MobileDev-5sem\\dataconnect\\.dataconnect\\schema"
+Generated sources: prelude.gql [94538B] main\query.gql [3909B] main\mutation.gql [10519B] main\implicit.gql [1031B] main\input.gql [24358B] main\relation.gql [13735B] 
+I1113 09:35:57.706145   35388 collector.go:107] connector "example" kotlinSdk wrote into "C:\\Programmering\\IOU-Android-App-MobileDev-5sem\\app\\src\\main\\kotlin\\com\\google\\firebase\\dataconnect\\generated"
+Generated sources: GetExpenseByIdQuery.kt [3396B] GetMyProfileAndExpensesQuery.kt [3754B] ExampleConnectorKeys.kt [907B] README.md [8068B] ExampleConnector.kt [13628B] FindUserQuery.kt [2403B] ListUsersQuery.kt [2023B] SettleUserShareMutation.kt [1985B] UpsertCurrentUserMutation.kt [1794B] ExampleConnectorEnums.kt [281B] AddDebtorToExpenseMutation.kt [2137B] CreateExpenseMutation.kt [1735B] DeleteExpenseMutation.kt [1820B] 
+I1113 09:35:57.706145   35388 load.go:109] Finished reloading
+I1113 09:35:57.706145   35388 dev.go:103] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I1113 09:35:57.707147   35388 dev.go:103] Listening on address (HTTP + gRPC): [::1]:9399
+I1113 09:36:03.450369   35388 migrate.go:24] Running migration SQL:
+Step 1: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+Step 2: CREATE TABLE "public"."user" ("id" text NOT NULL, "phone" character varying(50) NOT NULL, "total_debt" numeric(10,2) NOT NULL, "total_missing" numeric(10,2) NOT NULL, "username" character varying(50) NOT NULL, PRIMARY KEY ("id"))
+Step 3: CREATE TABLE "public"."expense" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user_id" text NOT NULL, "amount" numeric(10,2) NOT NULL, "name" character varying(50) NOT NULL, PRIMARY KEY ("id"), CONSTRAINT "expense_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
+Step 4: CREATE INDEX "expense_userId_idx" ON "public"."expense" ("user_id")
+Step 5: CREATE TABLE "public"."expense_provider" ("expense_id" uuid NOT NULL, "user_id" text NOT NULL, "share_amount" numeric(10,2) NULL, PRIMARY KEY ("expense_id", "user_id"), CONSTRAINT "expense_provider_expense_id_fkey" FOREIGN KEY ("expense_id") REFERENCES "public"."expense" ("id") ON DELETE CASCADE, CONSTRAINT "expense_provider_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user" ("id") ON DELETE CASCADE)
+Step 6: CREATE INDEX "expense_provider_expenseId_idx" ON "public"."expense_provider" ("expense_id")
+Step 7: CREATE INDEX "expense_provider_userId_idx" ON "public"."expense_provider" ("user_id")
+I1113 09:36:03.571460   35388 control.go:90] [projects/emulator/locations/emulator/services/iou-android-app-mobiledev-5sem 8964] UpdateResources(): done
+Main schema: sources: schema/schema.gql [594B] 
+Connector "example": sources: example/mutations.gql [2077B] example/queries.gql [1809B] 
+I1113 09:36:03.580512   35388 configure_emulator.go:21] ConfigureEmulator successed
+Request: service_id: "iou-android-app-mobiledev-5sem"
+connection_string: "postgres://127.0.0.1:5432/fdcdb?sslmode=disable"
+database: "fdcdb"
+
+Response: 
+I1113 09:36:22.210489   35388 engine.go:218] [projects/emulator/locations/emulator/services/iou-android-app-mobiledev-5sem 8964] ExecuteGraphql mutation CreateExpense: invalid request. 
+Auth: admin
+Errors: [message:"$name (String) is missing" extensions:{code:INVALID_ARGUMENT} message:"$amount (Float) is missing" extensions:{code:INVALID_ARGUMENT}]
+sources: input [3888B] 
+I1113 09:36:27.665922   35388 engine.go:218] [projects/emulator/locations/emulator/services/iou-android-app-mobiledev-5sem 8964] ExecuteGraphql mutation CreateExpense: invalid request. 
+Auth: admin
+
+Variables Set: [amount name]
+Errors: [message:"Failed to compute String_Expr" extensions:{code:INTERNAL debug_details:"CEL expression failed: error during expression evaluation: cannot read auth.uid because the admin request does not impersonate an end user\nExpression evaluated: CEL(\"auth.uid\" -> String)"}]
+sources: input [3888B] 
+I1113 09:36:31.218539   35388 engine.go:218] [projects/emulator/locations/emulator/services/iou-android-app-mobiledev-5sem 8964] ExecuteGraphql mutation CreateExpense: invalid request. 
+Auth: admin
+
+Variables Set: [amount name]
+Errors: [message:"Failed to compute String_Expr" extensions:{code:INTERNAL debug_details:"CEL expression failed: error during expression evaluation: cannot read auth.uid because the admin request does not impersonate an end user\nExpression evaluated: CEL(\"auth.uid\" -> String)"}]
+sources: input [3888B] 
+I1113 09:36:39.471047   35388 engine.go:218] [projects/emulator/locations/emulator/services/iou-android-app-mobiledev-5sem 8964] ExecuteGraphql mutation CreateExpense: invalid request. 
+Auth: admin
+
+Variables Set: [amount name]
+Errors: [message:"Failed to compute String_Expr" extensions:{code:INTERNAL debug_details:"CEL expression failed: error during expression evaluation: cannot read auth.uid because the admin request does not impersonate an end user\nExpression evaluated: CEL(\"auth.uid\" -> String)"}]
+sources: input [3888B] 

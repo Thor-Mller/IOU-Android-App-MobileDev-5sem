@@ -24,6 +24,7 @@ type ExpenseProvider @table(key: ["expense", "user"]) {
 
 type Group @table {
   name: String! @col(dataType: "varchar(50)")
+  creator: User!
 }
 
 type GroupUser @table(key: ["group", "user"]) {
