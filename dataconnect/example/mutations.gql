@@ -1,10 +1,12 @@
-# 1. Create the current user profile upon first sign-up
+# -------- User Mutations -----------
+
+# Create the current user profile using firebase auth id
 mutation CreateCurrentUser(
   $username: String!
   $phone: String!
   $email: String!
 ) @auth(level: USER) {
-  user_insert(
+  user_upsert(
     data: {
       id_expr: "auth.uid"
       username: $username
@@ -16,21 +18,64 @@ mutation CreateCurrentUser(
   )
 }
 
-# 2. Create an expense owned by the signed-in Firebase user
+# A robust way to delete a currently logged in user account
+mutation DeleteCurrentUser @auth(level: USER) @transaction {
+  expenseProvider_deleteMany(
+    where: {
+      _or: [
+        { userId: { eq_expr: "auth.uid" } }
+        { expense: { userId: { eq_expr: "auth.uid" } } }
+        { expense: { group: { creatorId: { eq_expr: "auth.uid" } } } }
+      ]
+    }
+  )
+
+  expense_deleteMany(
+    where: {
+      _or: [
+        { userId: { eq_expr: "auth.uid" } }
+        { group: { creatorId: { eq_expr: "auth.uid" } } }
+      ]
+    }
+  )
+
+  groupUser_deleteMany(
+    where: {
+      _or: [
+        { userId: { eq_expr: "auth.uid" } }
+        { group: { creatorId: { eq_expr: "auth.uid" } } }
+      ]
+    }
+  )
+
+  group_deleteMany(where: { creatorId: { eq_expr: "auth.uid" } })
+
+  user_delete(key: { id_expr: "auth.uid" })
+}
+
+# -------- Expense Mutations -----------
+
 mutation CreateExpense(
   $name: String!
   $amount: Float!
-) @auth(level: USER) {
+  $groupId: UUID!
+) @auth(level: USER) @transaction {
+  query @redact {
+    groupUser(key: { groupId: $groupId, userId_expr: "auth.uid" })
+    @check(expr: "this != null", message: "You must be a member of this group to add expenses") {
+      userId
+    }
+  }
   expense_insert(
     data: {
       userId_expr: "auth.uid"
       name: $name
       amount: $amount
+      groupId: $groupId
     }
   )
 }
 
-# 3. Add a debtor to an expense (only allowed if the caller owns the expense)
 mutation AddDebtorToExpense(
   $expenseId: UUID!
   $debtorUserId: String!
@@ -42,8 +87,15 @@ mutation AddDebtorToExpense(
       user {
         id
       }
+
+      group @check(expr: "size(this.members) > 0", message: "Debtor must be a member of this group") {
+        members: groupUsers_on_group(where: { userId: { eq: $debtorUserId } }) {
+          userId
+        }
+      }
     }
   }
+
   expenseProvider_insert(
     data: {
       expenseId: $expenseId
@@ -53,14 +105,13 @@ mutation AddDebtorToExpense(
   )
 }
 
-# 4. Settle/remove a debtor's share (only allowed if the caller owns the expense)
-mutation SettleUserShare(
+mutation RemoveDebtorFromExpense(
   $expenseId: UUID!
   $debtorUserId: String!
 ) @auth(level: USER) @transaction {
   query @redact {
     expense(key: { id: $expenseId })
-    @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can settle shares") {
+    @check(expr: "this != null && this.user.id == auth.uid", message: "Only the expense creator can remove debtors") {
       user {
         id
       }
@@ -74,7 +125,6 @@ mutation SettleUserShare(
   )
 }
 
-# 5. Delete an expense (only allowed if the caller owns the expense)
 mutation DeleteExpense(
   $expenseId: UUID!
 ) @auth(level: USER) @transaction {
@@ -86,5 +136,101 @@ mutation DeleteExpense(
       }
     }
   }
+  expenseProvider_deleteMany(where: { expenseId: { eq: $expenseId } })
   expense_delete(key: { id: $expenseId })
+}
+
+# ---------- Group Mutations ----------
+
+mutation CreateGroup(
+  $name: String!
+) @auth(level: USER) @transaction {
+  group: group_insert(
+    data: {
+      name: $name
+      creatorId_expr: "auth.uid"
+    }
+  )
+  groupUser_insert(
+    data: {
+      groupId_expr: "response.group.id"
+      userId_expr: "auth.uid"
+    }
+  )
+}
+
+mutation UpdateGroup(
+  $groupId: UUID!
+  $name: String!
+) @auth(level: USER) @transaction {
+  query @redact {
+    group(key: { id: $groupId })
+    @check(expr: "this != null && this.creator.id == auth.uid", message: "Only the group creator can update the group") {
+      creator {
+        id
+      }
+    }
+  }
+  group_update(
+    key: { id: $groupId }
+    data: {
+      name: $name
+    }
+  )
+}
+
+mutation DeleteGroup(
+  $groupId: UUID!
+) @auth(level: USER) @transaction {
+  query @redact {
+    group(key: { id: $groupId })
+    @check(expr: "this != null && this.creator.id == auth.uid", message: "Only the group creator can delete the group") {
+      creator {
+        id
+      }
+    }
+  }
+  expenseProvider_deleteMany(where: { expense: { groupId: { eq: $groupId } } })
+  expense_deleteMany(where: { groupId: { eq: $groupId } })
+  groupUser_deleteMany(where: { groupId: { eq: $groupId } })
+  group_delete(key: { id: $groupId })
+}
+
+mutation AddUserToGroup(
+  $groupId: UUID!
+  $userId: String!
+) @auth(level: USER) @transaction {
+  query @redact {
+    groupUser(key: { groupId: $groupId, userId_expr: "auth.uid" })
+    @check(expr: "this != null", message: "You must be a member of this group to add other users") {
+      userId
+    }
+  }
+
+  groupUser_insert(
+    data: {
+      groupId: $groupId
+      userId: $userId
+    }
+  )
+}
+
+mutation RemoveUserFromGroup(
+  $groupId: UUID!
+  $userId: String!
+) @auth(level: USER) @transaction {
+  query @redact {
+    group(key: { id: $groupId })
+    @check(expr: "this != null && this.creator.id == auth.uid", message: "Only the group creator can delete users from the group") {
+      creator {
+        id
+      }
+    }
+  }
+  groupUser_delete(
+    key: {
+      groupId: $groupId
+      userId: $userId
+    }
+  )
 }
