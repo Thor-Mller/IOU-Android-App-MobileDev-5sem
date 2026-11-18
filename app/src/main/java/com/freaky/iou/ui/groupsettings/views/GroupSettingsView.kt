@@ -1,4 +1,8 @@
 package com.freaky.iou.ui.groupsettings.views
 
-class GroupSettingsView {
+import androidx.compose.runtime.Composable
+
+@Composable
+fun NewGroupSettingsView(){
+
 }
