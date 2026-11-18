@@ -49,7 +49,6 @@ fun ReAuthScreen(
 
     val scope = rememberCoroutineScope()
 
-    // Viser systemets dialog (fingeraftryk/ansigt, eller telefonens PIN/mønster/adgangskode)
     fun showPrompt() {
         if (activity == null) return // fx i @Preview
         error = null
