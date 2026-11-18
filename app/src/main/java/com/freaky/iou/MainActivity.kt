@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentActivity
 import com.freaky.iou.ui.navigation.AppNavigation
 import com.freaky.iou.ui.theme.IOUTheme
 
-// FragmentActivity (i stedet for ComponentActivity) er nødvendig for BiometricPrompt
+// FragmentActivity (instead of ComponentActivity) is required for BiometricPrompt
 class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
