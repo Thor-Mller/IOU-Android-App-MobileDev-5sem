@@ -17,10 +17,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 object SplashGraph
+
 @Serializable
 object AuthGraph
+
 @Serializable
 object HomeGraph
+
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
@@ -72,22 +75,26 @@ fun AppNavigation() {
                 LoginScreen(onNavigateToSignup = {
                     navController.navigate(SignupRoute)
                 }, onLoginSuccess = {
-                    navController.navigate(HomeGraph)
+                    navController.navigate(HomeGraph) {
+                        popUpTo(AuthGraph) { inclusive = true }
+                    }
                 })
             }
             composable<SignupRoute> {
                 SignupScreen(onNavigateToLogin = {
                     navController.navigateUp()
                 }, onSignupSuccess = {
-                    navController.navigate(HomeGraph)
+                    navController.navigate(HomeGraph) {
+                        popUpTo(AuthGraph) { inclusive = true }
+                    }
                 })
             }
-        }
-        navigation<HomeGraph>(startDestination = HomeRoute) {
-            composable<HomeRoute> {
-                HomeScreen()
+            navigation<HomeGraph>(startDestination = HomeRoute) {
+                composable<HomeRoute> {
+                    HomeScreen()
+                }
             }
-        }
 
+        }
     }
 }
