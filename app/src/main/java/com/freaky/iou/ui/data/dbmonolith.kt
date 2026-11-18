@@ -1,5 +1,6 @@
 package com.freaky.iou.ui.data
 
+import com.freaky.iou.ui.data.models.Group
 import com.freaky.iou.ui.data.models.User
 import com.google.firebase.dataconnect.generated.ExampleConnector
 import com.google.firebase.dataconnect.generated.execute
@@ -8,7 +9,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import com.google.firebase.dataconnect.generated.GetCurrentGroupsQuery
 import com.google.firebase.dataconnect.generated.GetUsersInGroupQuery
+import com.google.firebase.dataconnect.generated.SearchUsersByUsernameQuery
 import com.google.firebase.dataconnect.generated.SearchUsersInGroupQuery
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
@@ -185,6 +188,17 @@ object Database {
         )
     }
 
+    suspend fun searchUsersByUsername(search: String): Result<List<User>> = safeCall {
+        ensureAuthenticated()
+        val response = connector.searchUsersByUsername.execute(search = search)
+        response.data.users.map {it.toUser()}
+    }
+
+    suspend fun getCurrentGroups(): Result<List<Group>> = safeCall {
+        ensureAuthenticated()
+        val response = connector.getCurrentGroups.execute()
+        response.data.groupUsers.map {it.group.toGroup()}
+    }
     private suspend inline fun <T> safeCall(block: () -> T): Result<T> =
         try {
             Result.success(block())
@@ -193,4 +207,28 @@ object Database {
         } catch (e: Throwable) {
             Result.failure(e)
         }
+
+    fun SearchUsersByUsernameQuery.Data.UsersItem.toUser(): User {
+        return User(
+            id = this.id,
+            username = this.username,
+            phone = this.phone,
+            email = this.email,
+        )
+    }
+
+    fun GetCurrentGroupsQuery.Data.GroupUsersItem.Group.Creator.toUser(): User {
+        return User(
+            id = this.id,
+            username = this.username
+        )
+    }
+
+    fun GetCurrentGroupsQuery.Data.GroupUsersItem.Group.toGroup(): Group {
+        return Group(
+            id = this.id,
+            name = this.name,
+            creator = this.creator.toUser()
+        )
+    }
 }
