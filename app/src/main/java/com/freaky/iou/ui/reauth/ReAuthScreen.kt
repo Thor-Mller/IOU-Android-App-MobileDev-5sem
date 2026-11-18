@@ -50,7 +50,7 @@ fun ReAuthScreen(
     val scope = rememberCoroutineScope()
 
     fun showPrompt() {
-        if (activity == null) return // fx i @Preview
+        if (activity == null) return
         error = null
 
         val prompt = BiometricPrompt(
