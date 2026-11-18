@@ -31,11 +31,11 @@ object Database {
         email: String,
         password: String,
     ): Result<FirebaseUser> = safeCall {
-        val result = auth.createUserWithEmailAndPassword(email, password).await()
-        val user = result.user ?: throw IllegalStateException("User creation returned null.")
-
-        user
+        val cleanEmail = email.trim().lowercase()
+        val result = auth.createUserWithEmailAndPassword(cleanEmail, password).await()
+        result.user ?: throw IllegalStateException("User creation returned null.")
     }
+
     suspend fun createUserRecord(
         username: String,
         phone: String,
@@ -44,18 +44,27 @@ object Database {
         val user = auth.currentUser ?: throw IllegalStateException("No signed-in user.")
         user.getIdToken(false).await()
 
+        val cleanUsername = username.trim().lowercase()
+        val cleanPhone = phone.filter { it.isDigit() || it == '+' }
+        val cleanEmail = email.trim().lowercase()
+
         val existing = connector.getCurrentUser.execute().data.user
         if (existing == null) {
             connector.createCurrentUser.execute(
-                username = username,
-                phone = phone,
-                email = email
+                username = cleanUsername,
+                phone = cleanPhone,
+                email = cleanEmail
             )
         }
     }
     suspend fun signUp(user: User): Result<Unit> = safeCall {
-        createAuthAccount(user.email, user.password).getOrThrow()
-        createUserRecord(user.username, user.phone, user.email).getOrThrow()
+        val firebaseUser = createAuthAccount(user.email, user.password).getOrThrow()
+
+        createUserRecord(user.username, user.phone, user.email)
+            .onFailure { error ->
+                firebaseUser.delete().await()
+                throw error
+            }
     }
 
     /**
