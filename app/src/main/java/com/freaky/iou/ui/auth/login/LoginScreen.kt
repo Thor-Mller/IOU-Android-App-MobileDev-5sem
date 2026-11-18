@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.freaky.iou.ui.auth.components.EmailTextField
 import com.freaky.iou.ui.auth.components.PasswordTextField
-import com.freaky.iou.ui.auth.components.UsernameTextField
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
 
