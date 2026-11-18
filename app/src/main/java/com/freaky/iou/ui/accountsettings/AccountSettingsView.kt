@@ -1,4 +1,4 @@
-package com.freaky.iou.ui.accountsettings.views
+package com.freaky.iou.ui.accountsettings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,27 +15,30 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.freaky.iou.ui.accountsettings.components.ButtonField
 import com.freaky.iou.ui.accountsettings.components.DropdownField
 import com.freaky.iou.ui.accountsettings.components.EditField
-import com.freaky.iou.ui.accountsettings.viewmodels.AccountSettingsViewModel
 import com.freaky.iou.ui.theme.IOUTheme
+import kotlinx.coroutines.launch
 
 @Composable
-fun NewAccountSettingsView(
-    viewModel: AccountSettingsViewModel
-){
+fun AccountSettingsView(
+    viewModel: AccountSettingsViewModel = viewModel(),
+    goToLogin: () -> Unit = {},
+) {
     val state = viewModel.state
+    val scope = rememberCoroutineScope()
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
@@ -55,20 +58,27 @@ fun NewAccountSettingsView(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            ButtonField("Log Out", {})
-            ButtonField("Delete Account", {})
+            ButtonField("Log Out", {
+                viewModel.onLogOutClicked(goToLogin)
+            })
+            ButtonField(
+                "Delete Account", {
+                    scope.launch {
+                        viewModel.onDeleteAccountClicked(goToLogin)
+                    }
+                })
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewNewAccountSettingsView() {
-    IOUTheme {
+fun PreviewAccountSettingsView() {
+    IOUTheme(darkTheme = true) {
         val previewViewModel = remember {
             AccountSettingsViewModel(
             )
         }
-        NewAccountSettingsView(previewViewModel)
+        AccountSettingsView(previewViewModel)
     }
 }

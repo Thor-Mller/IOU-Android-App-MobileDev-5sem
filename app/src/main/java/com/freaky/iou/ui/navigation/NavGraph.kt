@@ -16,3 +16,6 @@ object HomeRoute
 
 @Serializable
 object NewGroupRoute
+
+@Serializable
+object AccountSettings

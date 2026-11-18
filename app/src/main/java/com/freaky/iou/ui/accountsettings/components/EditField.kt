@@ -1,14 +1,11 @@
 package com.freaky.iou.ui.accountsettings.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -30,26 +27,21 @@ fun EditField(name: String, default: String) {
 
     Box(
         modifier = Modifier
-            .border(
-                width = 1.5.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(4.dp)
-            )
             .padding(10.dp, 5.dp)
             .fillMaxWidth()
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(text = name,
+        ) {
+            Text(
+                text = name,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
+                modifier = Modifier.fillMaxWidth(0.4f)
             )
             TextField(
                 value = text,
@@ -64,7 +56,7 @@ fun EditField(name: String, default: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewEditField(){
+fun PreviewEditField() {
     IOUTheme {
         EditField("First Name", "Edit Name")
     }
