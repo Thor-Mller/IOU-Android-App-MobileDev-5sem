@@ -47,6 +47,7 @@ import com.freaky.iou.ui.theme.IOUTheme
 fun HomeScreen(
     onGoToGroup: () -> Unit = {},
     onNavigateToCreateNewGroup: () -> Unit = {},
+    onNavigateToAccountSettings: () -> Unit = {},
 ) {
 
     val allItems = remember { List(30) { Group(name = "group${it + 1}") } }
@@ -98,12 +99,14 @@ fun HomeScreen(
                         .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(48.dp * 0.6f)
-                    )
+                    IconButton(onClick = onNavigateToAccountSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Profile",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(48.dp * 0.6f)
+                        )
+                    }
                 }
             }
 

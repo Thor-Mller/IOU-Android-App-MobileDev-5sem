@@ -7,10 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.freaky.iou.ui.accountsettings.AccountSettingsView
 import com.freaky.iou.ui.auth.login.LoginScreen
 import com.freaky.iou.ui.auth.signup.SignupScreen
 import com.freaky.iou.ui.home.HomeScreen
 import com.freaky.iou.ui.newgroup.NewGroupScreen
+import com.freaky.iou.ui.reauth.ReAuthScreen
 import com.freaky.iou.ui.splash.SplashScreen
 import kotlinx.serialization.Serializable
 
@@ -21,10 +23,16 @@ object SplashGraph
 object AuthGraph
 
 @Serializable
+object ReAuthGraph
+
+@Serializable
 object HomeGraph
 
 @Serializable
 object NewGroupGraph
+
+@Serializable
+object AccountGraph
 
 @Composable
 fun AppNavigation() {
@@ -62,11 +70,17 @@ fun AppNavigation() {
     ) {
         navigation<SplashGraph>(startDestination = SplashRoute) {
             composable<SplashRoute> {
-                SplashScreen(onGoToApp = {
+                SplashScreen(
+                    onGoToAuth = {
                     navController.navigate(AuthGraph) {
-                        popUpTo(SplashRoute) { inclusive = true }
+                        popUpTo(SplashGraph) { inclusive = true }
                     }
-                })
+                    },
+                    onGoToReAuth = {
+                        navController.navigate(ReAuthGraph) {
+                            popUpTo(SplashGraph) { inclusive = true }
+                        }
+                    })
             }
         }
 
@@ -91,11 +105,30 @@ fun AppNavigation() {
             }
         }
 
+        navigation<ReAuthGraph>(startDestination = ReAuthRoute) {
+            composable<ReAuthRoute> {
+                ReAuthScreen(
+                    onLogout = {
+                        navController.navigate(AuthGraph) {
+                            popUpTo(ReAuthGraph) { inclusive = true }
+                        }
+                    },
+                    onUnlocked = {
+                        navController.navigate(HomeGraph) {
+                            popUpTo(ReAuthGraph) { inclusive = true }
+                        }
+                    })
+            }
+        }
+
         navigation<HomeGraph>(startDestination = HomeRoute) {
             composable<HomeRoute> {
                 HomeScreen(
                     onNavigateToCreateNewGroup = {
                         navController.navigate(NewGroupGraph) {}
+                    },
+                    onNavigateToAccountSettings = {
+                        navController.navigate(AccountGraph) {}
                     })
             }
         }
@@ -103,10 +136,18 @@ fun AppNavigation() {
         navigation<NewGroupGraph>(startDestination = NewGroupRoute) {
             composable<NewGroupRoute> {
                 NewGroupScreen(onCancel = {
-                    navController.navigate(HomeGraph) {
-                        popUpTo(NewGroupRoute) { inclusive = true }
-                    }
+                    navController.navigateUp()
                 }, onGroupCreated = {})
+            }
+        }
+
+        navigation<AccountGraph>(startDestination = AccountSettings) {
+            composable<AccountSettings> {
+                AccountSettingsView(goToLogin = {
+                    navController.navigate(AuthGraph) {
+                        popUpTo(AccountGraph) { inclusive = true }
+                    }
+                })
             }
         }
 

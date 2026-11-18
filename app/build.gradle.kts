@@ -59,6 +59,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.navigation:navigation-compose:2.9.5")
     implementation("com.airbnb.android:lottie-compose:6.3.0")
+    implementation("androidx.biometric:biometric:1.1.0")
     implementation(libs.androidx.ui)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
