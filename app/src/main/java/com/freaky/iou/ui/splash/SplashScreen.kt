@@ -1,6 +1,8 @@
 package com.freaky.iou.ui.splash
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -10,9 +12,13 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
+import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(
+    extraDelayMillis: Long = 500,
+    onGoToApp: () -> Unit = {}
+) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.Asset("Animation - 1.json")
     )
@@ -21,11 +27,26 @@ fun SplashScreen() {
         iterations = 1 // Play once for the splash screen
     )
 
-    LottieAnimation(
-        composition = composition,
-        progress = { progress },
-        modifier = Modifier.fillMaxSize()
-    )
+    val isFinished = composition != null && progress == 1f
+    LaunchedEffect(isFinished) {
+        if (isFinished) {
+            delay(extraDelayMillis)
+            onGoToApp()
+        }
+    }
+
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+
 }
 
 @Preview(showBackground = true)
