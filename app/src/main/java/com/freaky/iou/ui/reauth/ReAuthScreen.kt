@@ -80,7 +80,6 @@ fun ReAuthScreen(
         prompt.authenticate(info)
     }
 
-    // Vis dialogen automatisk når skærmen åbner
     LaunchedEffect(Unit) { showPrompt() }
 
     Surface(
