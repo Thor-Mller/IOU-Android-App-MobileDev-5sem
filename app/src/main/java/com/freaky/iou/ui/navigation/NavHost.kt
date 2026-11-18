@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.freaky.iou.ui.accountsettings.AccountSettingsView
 import com.freaky.iou.ui.auth.login.LoginScreen
 import com.freaky.iou.ui.auth.signup.SignupScreen
 import com.freaky.iou.ui.home.HomeScreen
@@ -25,6 +26,9 @@ object HomeGraph
 
 @Serializable
 object NewGroupGraph
+
+@Serializable
+object AccountGraph
 
 @Composable
 fun AppNavigation() {
@@ -96,6 +100,9 @@ fun AppNavigation() {
                 HomeScreen(
                     onNavigateToCreateNewGroup = {
                         navController.navigate(NewGroupGraph) {}
+                    },
+                    onNavigateToAccountSettings = {
+                        navController.navigate(AccountGraph) {}
                     })
             }
         }
@@ -107,6 +114,16 @@ fun AppNavigation() {
                         popUpTo(NewGroupRoute) { inclusive = true }
                     }
                 }, onGroupCreated = {})
+            }
+        }
+
+        navigation<AccountGraph>(startDestination = AccountSettings) {
+            composable<AccountSettings> {
+                AccountSettingsView(goToLogin = {
+                    navController.navigate(AuthGraph) {
+                        popUpTo(AccountGraph) { inclusive = true }
+                    }
+                })
             }
         }
 

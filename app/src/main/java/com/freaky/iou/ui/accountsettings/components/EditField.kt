@@ -1,12 +1,11 @@
-package com.freaky.iou.ui.accountsettings.component
+package com.freaky.iou.ui.accountsettings.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -16,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,25 +27,21 @@ fun EditField(name: String, default: String) {
 
     Box(
         modifier = Modifier
-            .border(
-                width = 1.5.dp,
-                color = Color.Black,
-                shape = RoundedCornerShape(4.dp)
-            )
             .padding(10.dp, 5.dp)
             .fillMaxWidth()
-    ){
+    ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .height(50.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(text = name,
+        ) {
+            Text(
+                text = name,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
+                modifier = Modifier.fillMaxWidth(0.4f)
             )
             TextField(
                 value = text,
@@ -62,7 +56,7 @@ fun EditField(name: String, default: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewEditField(){
+fun PreviewEditField() {
     IOUTheme {
         EditField("First Name", "Edit Name")
     }
