@@ -1,5 +1,5 @@
 # 1. Get the logged-in user's profile, expenses they paid for, and debts they owe
-query GetMyProfileAndExpenses @auth(level: PUBLIC) {
+query GetMyProfileAndExpenses @auth(level: USER) {
   user(key: { id_expr: "auth.uid" }) {
     id
     username
@@ -39,7 +39,7 @@ query GetMyProfileAndExpenses @auth(level: PUBLIC) {
 }
 
 # 2. List all users so the user can pick friends to split an expense with
-query ListUsers @auth(level: PUBLIC, insecureReason: "Authenticated users can browse users to split expenses with") {
+query ListUsers @auth(level: USER, insecureReason: "Authenticated users can browse users to split expenses with") {
   users {
     id
     username
@@ -48,8 +48,19 @@ query ListUsers @auth(level: PUBLIC, insecureReason: "Authenticated users can br
   }
 }
 
+query GetCurrentUser @auth(level: USER) {
+  user(key: { id_expr: "auth.uid" }) {
+    id
+    username
+    phone
+    email
+    totalMissing
+    totalDebt
+  }
+}
+
 # 3. Search for a user by username or phone number
-query FindUser($search: String!) @auth(level: PUBLIC, insecureReason: "Authenticated users can search for users by username or phone") {
+query FindUser($search: String!) @auth(level: USER, insecureReason: "Authenticated users can search for users by username or phone") {
   users(
     where: {
       _or: [
@@ -67,7 +78,7 @@ query FindUser($search: String!) @auth(level: PUBLIC, insecureReason: "Authentic
 }
 
 # 4. Get full details for one specific expense
-query GetExpenseById($expenseId: UUID!) @auth(level: PUBLIC, insecureReason: "Authenticated users can view details of shared expenses") {
+query GetExpenseById($expenseId: UUID!) @auth(level: USER, insecureReason: "Authenticated users can view details of shared expenses") {
   expense(key: { id: $expenseId }) {
     id
     name
@@ -83,6 +94,76 @@ query GetExpenseById($expenseId: UUID!) @auth(level: PUBLIC, insecureReason: "Au
         username
         phone
         email
+      }
+    }
+  }
+}
+
+query GetUsersInGroup($groupId: UUID!) @auth(level: USER) {
+  groupUsers(where: { groupId: { eq: $groupId } }) {
+    user {
+      id
+      username
+      email
+      phone
+      totalMissing
+      totalDebt
+    }
+  }
+}
+
+query SearchUsersInGroup(
+  $groupId: UUID!
+  $search: String!
+) @auth(level: USER) {
+  groupUsers(
+    where: {
+      _and: [
+        { groupId: { eq: $groupId } }
+        {
+          user: {
+            _or: [
+              { username: { contains: $search } }
+              { email: { contains: $search } }
+              { phone: { contains: $search } }
+            ]
+          }
+        }
+      ]
+    }
+  ) {
+    user {
+      id
+      username
+      email
+      phone
+      totalMissing
+      totalDebt
+    }
+  }
+}
+
+query SearchUsersByUsername($search: String!) @auth(level: USER) {
+  users(
+    where: { username: { contains: $search } }
+    orderBy: [{ username: ASC }]
+    limit: 10
+  ) {
+    id
+    username
+    phone
+    email
+  }
+}
+
+query GetCurrentGroups @auth(level: USER) {
+  groupUsers(where: { user: { id: { eq_expr: "auth.uid" } } }) {
+    group {
+      id
+      name
+      creator {
+        id
+        username
       }
     }
   }

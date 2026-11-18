@@ -37,7 +37,7 @@ fun NumberField(
 @Preview
 @Composable
 fun NumberFieldPreview() {
-    IOUTheme() {
+    IOUTheme {
         NumberField(TextFieldState("0"))
     }
 }
