@@ -143,3 +143,15 @@ query SearchUsersInGroup(
   }
 }
 
+query SearchUsersByUsername($search: String!) @auth(level: USER) {
+  users(
+    where: { username: { contains: $search } }
+    orderBy: [{ username: ASC }]
+    limit: 10
+  ) {
+    id
+    username
+    phone
+    email
+  }
+}

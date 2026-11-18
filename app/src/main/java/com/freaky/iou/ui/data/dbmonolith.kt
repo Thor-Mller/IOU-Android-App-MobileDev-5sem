@@ -1,15 +1,16 @@
 package com.freaky.iou.ui.data
 
 import com.freaky.iou.ui.data.models.User
-import com.google.firebase.dataconnect.generated.ExampleConnector
-import com.google.firebase.dataconnect.generated.execute
-import com.google.firebase.dataconnect.generated.instance
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import com.google.firebase.dataconnect.generated.ExampleConnector
 import com.google.firebase.dataconnect.generated.GetUsersInGroupQuery
 import com.google.firebase.dataconnect.generated.SearchUsersInGroupQuery
+import com.google.firebase.dataconnect.generated.SearchUsersByUsernameQuery
+import com.google.firebase.dataconnect.generated.execute
+import com.google.firebase.dataconnect.generated.instance
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
@@ -178,5 +179,16 @@ object Database {
                 email = email
             )
         }
+    }
+
+    suspend fun searchUsersByUsername(
+        search: String
+    ): Result<List<SearchUsersByUsernameQuery.Data.UsersItem>> = runCatching {
+        ensureAuthenticated()
+        val trimmed = search.trim()
+        if (trimmed.isEmpty()) return@runCatching emptyList()
+
+        val response = connector.searchUsersByUsername.execute(search = trimmed)
+        response.data.users
     }
 }

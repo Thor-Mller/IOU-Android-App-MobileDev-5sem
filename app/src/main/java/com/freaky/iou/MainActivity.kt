@@ -16,6 +16,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.freaky.iou.ui.group.NewGroupScreen
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
 
@@ -34,6 +36,11 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
+                        NewGroupScreen(
+                            viewModel = viewModel(),
+                            onCancel = { },
+                            onCreate = { }
+                        )
                     }
                 }
             }
