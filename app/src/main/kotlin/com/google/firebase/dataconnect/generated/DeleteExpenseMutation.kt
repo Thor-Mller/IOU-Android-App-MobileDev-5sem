@@ -15,7 +15,7 @@ package com.google.firebase.dataconnect.generated
 
 
 public interface DeleteExpenseMutation :
-    com.google.firebase.dataconnect.generated.GeneratedMutation<
+    GeneratedMutation<
       ExampleConnector,
       DeleteExpenseMutation.Data,
       DeleteExpenseMutation.Variables

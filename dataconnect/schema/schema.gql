@@ -13,6 +13,7 @@ type Expense @table {
   user: User!
   name: String! @col(dataType: "varchar(50)")
   amount: Float! @col(dataType: "numeric(10, 2)")
+  group: Group!
 }
 
 type ExpenseProvider @table(key: ["expense", "user"]) {
@@ -20,3 +21,13 @@ type ExpenseProvider @table(key: ["expense", "user"]) {
   user: User!
   shareAmount: Float @col(dataType: "numeric(10, 2)")
 }
+
+type Group @table {
+  name: String! @col(dataType: "varchar(50)")
+}
+
+type GroupUser @table(key: ["group", "user"]) {
+  group: Group!
+  user: User!
+}
+
