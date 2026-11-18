@@ -15,6 +15,8 @@ import com.freaky.iou.ui.splash.SplashScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
+object SplashGraph
+@Serializable
 object AuthGraph
 
 @Composable
@@ -25,7 +27,7 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = AuthGraph,
+        startDestination = SplashGraph,
 
         //region TRANSITIONS
 
@@ -53,16 +55,17 @@ fun AppNavigation() {
         //endregion TRANSITIONS
 
     ) {
-
-        navigation<AuthGraph>(startDestination = SplashRoute) {
+        navigation<SplashGraph>(startDestination = SplashRoute) {
             composable<SplashRoute> {
                 SplashScreen(onGoToApp = {
-                    navController.navigate(LoginRoute) {
-                        // Fjern splash fra back-stacken, så man ikke kan gå tilbage til den
+                    navController.navigate(AuthGraph) {
                         popUpTo(SplashRoute) { inclusive = true }
                     }
                 })
             }
+        }
+
+        navigation<AuthGraph>(startDestination = LoginRoute) {
             composable<LoginRoute> {
                 LoginScreen(onNavigateToSignup = {
                     navController.navigate(SignupRoute)
