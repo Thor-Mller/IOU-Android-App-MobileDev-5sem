@@ -8,3 +8,5 @@ object SplashRoute
 object LoginRoute
 @Serializable
 object SignupRoute
+@Serializable
+object HomeRoute

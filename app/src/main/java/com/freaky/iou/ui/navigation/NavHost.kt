@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.freaky.iou.ui.auth.UserViewModel
 import com.freaky.iou.ui.auth.login.LoginScreen
 import com.freaky.iou.ui.auth.signup.SignupScreen
+import com.freaky.iou.ui.home.HomeScreen
 import com.freaky.iou.ui.splash.SplashScreen
 import kotlinx.serialization.Serializable
 
@@ -18,7 +19,8 @@ import kotlinx.serialization.Serializable
 object SplashGraph
 @Serializable
 object AuthGraph
-
+@Serializable
+object HomeGraph
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
@@ -69,17 +71,21 @@ fun AppNavigation() {
             composable<LoginRoute> {
                 LoginScreen(onNavigateToSignup = {
                     navController.navigate(SignupRoute)
-                }, onLoginSuccess = { username ->
-                    userViewModel.onUserAuthenticated(username)
+                }, onLoginSuccess = {
+                    navController.navigate(HomeGraph)
                 })
             }
             composable<SignupRoute> {
                 SignupScreen(onNavigateToLogin = {
                     navController.navigateUp()
-                }, onSignupSuccess = { username ->
-                    userViewModel.onUserAuthenticated(username)
-                    navController.navigate(LoginRoute)
+                }, onSignupSuccess = {
+                    navController.navigate(HomeGraph)
                 })
+            }
+        }
+        navigation<HomeGraph>(startDestination = HomeRoute) {
+            composable<HomeRoute> {
+                HomeScreen()
             }
         }
 
