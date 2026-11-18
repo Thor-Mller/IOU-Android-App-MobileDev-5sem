@@ -1,5 +1,6 @@
 package com.freaky.iou.ui.data
 
+import com.freaky.iou.ui.data.models.Expense
 import com.freaky.iou.ui.data.models.Group
 import com.freaky.iou.ui.data.models.User
 import com.google.firebase.dataconnect.generated.ExampleConnector
@@ -10,6 +11,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.dataconnect.generated.GetCurrentGroupsQuery
+import com.google.firebase.dataconnect.generated.GetExpensesInGroupQuery
+import com.google.firebase.dataconnect.generated.GetGroupByIdQuery
+import com.google.firebase.dataconnect.generated.GetUserExpenseShareInGroupQuery
 import com.google.firebase.dataconnect.generated.GetUsersInGroupQuery
 import com.google.firebase.dataconnect.generated.SearchUsersByUsernameQuery
 import com.google.firebase.dataconnect.generated.SearchUsersInGroupQuery
@@ -38,23 +42,24 @@ object Database {
 
     suspend fun createUserRecord(
         username: String,
-        phone: String,
+        phone: String?,
         email: String
     ): Result<Unit> = safeCall {
         val user = auth.currentUser ?: throw IllegalStateException("No signed-in user.")
         user.getIdToken(false).await()
 
         val cleanUsername = username.trim().lowercase()
-        val cleanPhone = phone.filter { it.isDigit() || it == '+' }
+        val cleanPhone = phone?.trim()?.ifBlank { null }
         val cleanEmail = email.trim().lowercase()
 
         val existing = connector.getCurrentUser.execute().data.user
         if (existing == null) {
             connector.createCurrentUser.execute(
                 username = cleanUsername,
-                phone = cleanPhone,
-                email = cleanEmail
-            )
+                email = cleanEmail,
+            ) {
+                this.phone = cleanPhone
+            }
         }
     }
     suspend fun signUp(user: User): Result<Unit> = safeCall {
@@ -208,6 +213,50 @@ object Database {
         val response = connector.getCurrentGroups.execute()
         response.data.groupUsers.map {it.group.toGroup()}
     }
+
+    suspend fun getExpensesInGroup(groupId: UUID): Result<List<Expense>> = safeCall {
+        ensureAuthenticated()
+        val response = connector.getExpensesInGroup.execute(groupId)
+        response.data.expenses.map {it.toExpense()}
+    }
+
+    suspend fun getGroupData(groupId: UUID): Result<Group> = safeCall {
+        ensureAuthenticated()
+        val response = connector.getGroupById.execute(groupId)
+        val groupDto = response.data.group
+            ?: throw NoSuchElementException("Group not found for id: $groupId")
+        groupDto.toGroup()
+    }
+
+    suspend fun getUserShareAmountInGroup(groupId: UUID): Result<Map<Expense, Float>> = safeCall {
+        ensureAuthenticated()
+        val response = connector.getUserExpenseShareInGroup.execute(groupId)
+
+        response.data.expenseProviders.associate { item ->
+            item.expense.toExpense() to (item.shareAmount?.toFloat() ?: 0f)
+        }
+    }
+
+    suspend fun addPaymentToExpense(
+        expenseId: UUID,
+        paymentAmount: Float
+    ): Result<Unit> = safeCall {
+        ensureAuthenticated()
+        require(paymentAmount > 0f) { "Payment amount must be greater than 0." }
+
+        connector.addPaymentToExpense.execute(
+            expenseId = expenseId,
+            paymentAmount = paymentAmount.toDouble()
+        )
+    }
+
+    fun GetUserExpenseShareInGroupQuery.Data.ExpenseProvidersItem.Expense.toExpense(): Expense {
+        return Expense(
+            id = this.id,
+            name = this.name,
+            amount = this.amount.toFloat()
+        )
+    }
     private suspend inline fun <T> safeCall(block: () -> T): Result<T> =
         try {
             Result.success(block())
@@ -226,7 +275,28 @@ object Database {
         )
     }
 
+    fun GetGroupByIdQuery.Data.Group.toGroup(): Group {
+        return Group(
+            id = this.id,
+            name = this.name,
+            creator = this.creator.toUser()
+        )
+    }
+
+    fun GetGroupByIdQuery.Data.Group.Creator.toUser(): User {
+        return User(
+            id = this.id,
+            username = this.username
+        )
+    }
     fun GetCurrentGroupsQuery.Data.GroupUsersItem.Group.Creator.toUser(): User {
+        return User(
+            id = this.id,
+            username = this.username
+        )
+    }
+
+    fun GetExpensesInGroupQuery.Data.ExpensesItem.Group.Creator.toUser(): User {
         return User(
             id = this.id,
             username = this.username
@@ -238,6 +308,20 @@ object Database {
             id = this.id,
             name = this.name,
             creator = this.creator.toUser()
+        )
+    }
+
+    fun GetExpensesInGroupQuery.Data.ExpensesItem.toExpense(): Expense {
+        return Expense(
+            id = this.id,
+            user = User(id = this.userId),
+            name = this.name,
+            amount = this.amount.toFloat(),
+            group = Group(
+                id = this.group.id,
+                creator = this.group.creator.toUser(),
+                name = this.group.name
+            )
         )
     }
 }

@@ -3,7 +3,7 @@
 # Create the current user profile using firebase auth id
 mutation CreateCurrentUser(
   $username: String!
-  $phone: String!
+  $phone: String
   $email: String!
 ) @auth(level: USER) {
   user_upsert(
@@ -71,6 +71,7 @@ mutation CreateExpense(
       userId_expr: "auth.uid"
       name: $name
       amount: $amount
+      payed: 0.0
       groupId: $groupId
     }
   )
@@ -121,6 +122,61 @@ mutation RemoveDebtorFromExpense(
     key: {
       expenseId: $expenseId
       userId: $debtorUserId
+    }
+  )
+}
+
+mutation AddPaymentToExpense(
+  $expenseId: UUID!
+  $paymentAmount: Float!
+) @auth(level: USER) @transaction {
+  query @redact {
+    expense(key: { id: $expenseId })
+    @check(expr: "this != null", message: "Expense not found") {
+      id
+    }
+
+    providers: expenseProviders(
+      where: {
+        expenseId: { eq: $expenseId }
+        userId: { eq_expr: "auth.uid" }
+        shareAmount: { ge: $paymentAmount }
+      }
+    )
+    @check(
+      expr: "size(this) > 0"
+      message: "Payment exceeds your remaining share or you have no share on this expense"
+    ) {
+      shareAmount
+    }
+  }
+
+  expense_update(
+    key: { id: $expenseId }
+    data: {
+      payed_update: {
+        inc: $paymentAmount
+      }
+    }
+  )
+
+  expenseProvider_update(
+    key: {
+      expenseId: $expenseId
+      userId_expr: "auth.uid"
+    }
+    data: {
+      shareAmount_update: {
+        dec: $paymentAmount
+      }
+    }
+  )
+
+  expenseProvider_deleteMany(
+    where: {
+      expenseId: { eq: $expenseId }
+      userId: { eq_expr: "auth.uid" }
+      shareAmount: { le: 0.009 }
     }
   )
 }

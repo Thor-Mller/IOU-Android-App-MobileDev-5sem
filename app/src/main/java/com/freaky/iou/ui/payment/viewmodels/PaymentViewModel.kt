@@ -6,30 +6,38 @@ import androidx.compose.material3.SliderState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.freaky.iou.ui.data.Database
 import com.freaky.iou.ui.payment.models.PaymentState
+import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
-class PaymentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private val initialExpense: Float = savedStateHandle.get<Float>("initialAmount") ?: 0f
+class PaymentViewModel(
+    private val expenseId: UUID,
+    payAmount: Float
+) : ViewModel() {
+    private val initialExpense: Float = payAmount
 
     var state: PaymentState by mutableStateOf(
         PaymentState(
             sliderState = SliderState(
-                value = initialExpense, valueRange = 0f..initialExpense
-            ), amountState = TextFieldState(
-                initialText = initialExpense.toString()
+                value = initialExpense,
+                valueRange = 0f..initialExpense
+            ),
+            amountState = TextFieldState(
+                initialText = formatAmount(initialExpense)
             )
         )
     )
+        private set
 
     fun onSliderChange() {
         val rawValue = state.sliderState.value
         val formatted = formatAmount(rawValue)
 
-        // Only update text field if the formatted text actually differs
         if (state.amountState.text.toString() != formatted) {
             state.amountState.edit {
                 replace(0, length, formatted)
@@ -40,7 +48,6 @@ class PaymentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     fun onNumberFieldChange() {
         val text = state.amountState.text.toString().trim().replace(',', '.')
 
-        // Don't update slider if input is empty or trailing decimal point
         if (text.isEmpty() || text.endsWith('.')) return
 
         val parsed = text.toFloatOrNull() ?: return
@@ -51,6 +58,37 @@ class PaymentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
         if (state.sliderState.value != clamped) {
             state.sliderState.value = clamped
+        }
+    }
+
+    fun onPay(onSuccess: () -> Unit = {}) {
+        val rawText = state.amountState.text.toString().trim().replace(',', '.')
+        val parsedAmount = rawText.toFloatOrNull() ?: state.sliderState.value
+        val roundedAmount = ((parsedAmount * 100f).roundToInt() / 100f)
+            .coerceIn(0f, initialExpense)
+
+        if (roundedAmount <= 0f) {
+            state = state.copy(error = "Payment amount must be greater than 0.")
+            return
+        }
+
+        viewModelScope.launch {
+            state = state.copy(isLoading = true, error = null)
+
+            Database.addPaymentToExpense(
+                expenseId = expenseId,
+                paymentAmount = roundedAmount
+            )
+                .onSuccess {
+                    state = state.copy(isLoading = false)
+                    onSuccess()
+                }
+                .onFailure { throwable ->
+                    state = state.copy(
+                        isLoading = false,
+                        error = throwable.message ?: "Payment failed."
+                    )
+                }
         }
     }
 

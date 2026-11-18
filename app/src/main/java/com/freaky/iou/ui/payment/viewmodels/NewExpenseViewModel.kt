@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.freaky.iou.ui.data.Database
-import com.freaky.iou.ui.payment.models.Expense
+import com.freaky.iou.ui.payment.models.ExpenseState
 import com.google.firebase.dataconnect.generated.SearchUsersInGroupQuery
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -25,7 +25,7 @@ class NewExpenseViewModel(
         loadGroupMembers(initialGroupId)
     }
     var uiState by mutableStateOf(
-        Expense(
+        ExpenseState(
             title = initialTitle,
             groupId = initialGroupId,
             totalAmount = initialAmount,
@@ -113,7 +113,7 @@ class NewExpenseViewModel(
         )
     }
 
-    fun submitExpense(onSuccess: (Expense) -> Unit) {
+    fun submitExpense(onSuccess: (ExpenseState) -> Unit) {
         if (!uiState.isSplitValid || uiState.title.isBlank() || uiState.totalAmount <= 0.0) return
         if (isSaving) return
 

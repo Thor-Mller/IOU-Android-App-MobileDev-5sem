@@ -6,7 +6,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-data class Expense @OptIn(ExperimentalTime::class) constructor(
+data class ExpenseState @OptIn(ExperimentalTime::class) constructor(
     val id: UUID = UUID.randomUUID(),
     val title: String,
     val totalAmount: Double,

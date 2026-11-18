@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
@@ -85,7 +86,7 @@ class NewGroupViewModel : ViewModel() {
         state = state.copy(members = state.members - member)
     }
 
-    fun createGroup(onSuccess: () -> Unit) {
+    fun createGroup(onSuccess: (UUID) -> Unit) {
         val groupName = state.groupNameState.text.toString().trim()
         if (groupName.isBlank() || state.members.isEmpty() || isCreating) return
 
@@ -113,7 +114,7 @@ class NewGroupViewModel : ViewModel() {
                 if (failed != null) {
                     errorMessage = failed.exceptionOrNull()?.message ?: "Failed to add some members"
                 } else {
-                    onSuccess()
+                    onSuccess(groupId)
                 }
             }.onFailure { error ->
                 errorMessage = error.message ?: "Failed to create group"

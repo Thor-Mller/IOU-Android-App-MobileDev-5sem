@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -26,18 +28,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.freaky.iou.ui.payment.components.NumberField
 import com.freaky.iou.ui.payment.viewmodels.PaymentViewModel
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentScreen(
-    viewModel: PaymentViewModel = viewModel(),
-    onConfirm: (Float) -> Unit = {}
+    viewModel: PaymentViewModel,
+    onPaymentSuccess: () -> Unit = {}
 ) {
     val state = viewModel.state
 
@@ -80,7 +81,7 @@ fun PaymentScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "You owe ${state.sliderState.valueRange.endInclusive.toInt()} kr",
+                    text = "You owe ${"%.2f".format(state.sliderState.valueRange.endInclusive)} kr",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -92,17 +93,34 @@ fun PaymentScreen(
 
                 Slider(
                     state = state.sliderState,
+                    enabled = !state.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                state.error?.let { errorMessage ->
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
                 Button(
                     onClick = {
-                        val amount = state.amountState.text.toString().replace(',', '.').toFloatOrNull() ?: 0f
-                        onConfirm(amount)
+                        viewModel.onPay(onSuccess = onPaymentSuccess)
                     },
+                    enabled = !state.isLoading,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("OK")
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text("Pay")
+                    }
                 }
             }
         }
@@ -115,7 +133,8 @@ fun PaymentScreenPreview() {
     IOUTheme(darkTheme = true) {
         val previewViewModel = remember {
             PaymentViewModel(
-                savedStateHandle = SavedStateHandle(mapOf("initialAmount" to 200f))
+                expenseId = UUID.randomUUID(),
+                payAmount = 200f
             )
         }
         PaymentScreen(viewModel = previewViewModel)
