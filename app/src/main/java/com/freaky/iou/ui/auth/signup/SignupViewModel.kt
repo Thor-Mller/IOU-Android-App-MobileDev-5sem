@@ -34,7 +34,6 @@ class SignupViewModel : ViewModel() {
     suspend fun onSignupClicked(onSuccess: () -> Unit) {
         if (!isFormValid) return
 
-        // TODO: save user credentials
         val username = state.usernameState.text.toString()
         val email = state.emailState.text.toString()
         val password = state.passwordState.text.toString()

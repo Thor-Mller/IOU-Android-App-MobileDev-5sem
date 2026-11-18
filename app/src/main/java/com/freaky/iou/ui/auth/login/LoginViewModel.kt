@@ -1,6 +1,5 @@
 package com.freaky.iou.ui.auth.login
 
-import android.util.Log
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -21,8 +20,6 @@ class LoginViewModel : ViewModel() {
     suspend fun onLoginClicked(onSuccess: (String) -> Unit) {
 
         if (!isFormValid) return
-
-        // TODO: check credentials, send to homepage
 
         val email = state.emailState.text.toString()
         val password = state.passwordState.text.toString()
