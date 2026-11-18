@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,9 +27,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.freaky.iou.ui.auth.components.EmailTextField
 import com.freaky.iou.ui.auth.components.PasswordTextField
-import com.freaky.iou.ui.auth.components.UsernameTextField
 import com.freaky.iou.ui.theme.IOUTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -37,6 +39,8 @@ fun LoginScreen(
     onLoginSuccess: (String) -> Unit = {},
 ) {
     val state = viewModel.state
+
+    val scope = rememberCoroutineScope()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -78,15 +82,18 @@ fun LoginScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    UsernameTextField(state.usernameState, required = true)
+                    EmailTextField(state = state.emailState, required = true)
 
                     PasswordTextField(state = state.passwordState, required = true)
 
                     Button(
                         onClick = {
-                            viewModel.onLoginClicked { username ->
-                                onLoginSuccess(username)
+                            scope.launch {
+                                viewModel.onLoginClicked { email ->
+                                    onLoginSuccess(email)
+                                }
                             }
+
                         }, enabled = viewModel.isFormValid
                     ) {
                         Text("Sign In")

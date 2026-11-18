@@ -25,7 +25,6 @@ fun GroupCard(group: Group, modifier: Modifier = Modifier) {
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                // Pladsholder indtil du har rigtige billeder
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,

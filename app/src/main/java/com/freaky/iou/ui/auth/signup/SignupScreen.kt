@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,14 +31,16 @@ import com.freaky.iou.ui.auth.components.EmailTextField
 import com.freaky.iou.ui.auth.components.PasswordTextField
 import com.freaky.iou.ui.auth.components.UsernameTextField
 import com.freaky.iou.ui.theme.IOUTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignupScreen(
     viewModel: SignupViewModel = viewModel(),
     onNavigateToLogin: () -> Unit = {},
-    onSignupSuccess: (String) -> Unit = {},
+    onSignupSuccess: () -> Unit = {},
 ) {
     val state = viewModel.state
+    val scope = rememberCoroutineScope()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -94,8 +97,10 @@ fun SignupScreen(
 
                     Button(
                         onClick = {
-                            viewModel.onSignupClicked { username ->
-                                onSignupSuccess(username)
+                            scope.launch {
+                                viewModel.onSignupClicked {
+                                    onSignupSuccess()
+                                }
                             }
                         }, enabled = viewModel.isFormValid
                     ) {
