@@ -120,7 +120,7 @@ fun ReAuthScreen(
                     viewModel.onLogout(onLogout)
                 }
             }) {
-                Text("Log ind med en anden konto")
+                Text("Log in with another account")
             }
         }
     }
