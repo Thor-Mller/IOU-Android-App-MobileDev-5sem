@@ -111,7 +111,7 @@ fun ReAuthScreen(
                 )
                 error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                 Button(onClick = { showPrompt() }) {
-                    Text("Lås op")
+                    Text("Unlock")
                 }
             }
 
