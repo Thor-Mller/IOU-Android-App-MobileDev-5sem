@@ -40,7 +40,9 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onGoToGroup: () -> Unit = {}
+) {
 
     val allItems = remember { List(30) { Group(name = "group${it + 1}") } }
     var query by remember { mutableStateOf("") }

@@ -55,7 +55,7 @@ object Database {
     }
     suspend fun signUp(user: User): Result<Unit> = safeCall {
         createAuthAccount(user.email, user.password).getOrThrow()
-        createUserRecord(user.username, user.phone ?: "", user.email).getOrThrow()
+        createUserRecord(user.username, user.phone, user.email).getOrThrow()
     }
 
     /**
