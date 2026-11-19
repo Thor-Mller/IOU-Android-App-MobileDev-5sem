@@ -61,12 +61,12 @@ fun AppNavigation() {
         },
         popEnterTransition = {
             slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left, tween(300)
+                AnimatedContentTransitionScope.SlideDirection.Right, tween(300)
             )
         },
         popExitTransition = {
             slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left, tween(300)
+                AnimatedContentTransitionScope.SlideDirection.Right, tween(300)
             )
         },
 
@@ -203,8 +203,8 @@ fun AppNavigation() {
                     },
                     onGroupCreated = { groupId ->
                         navController.navigate(GroupRoute(groupId = groupId.toString())) {
-                            popUpTo<HomeGraph> {
-                                inclusive = true
+                            popUpTo<HomeRoute> {
+                                inclusive = false
                             }
                         }
                     }
@@ -216,7 +216,7 @@ fun AppNavigation() {
             composable<AccountSettings> {
                 AccountSettingsView(goToLogin = {
                     navController.navigate(AuthGraph) {
-                        popUpTo(AccountGraph) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 })
             }

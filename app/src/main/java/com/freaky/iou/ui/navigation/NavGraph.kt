@@ -29,8 +29,7 @@ data class PaymentRoute(
     val payAmount: Float
 )
 @Serializable
-data class NewGroupRoute (
-    val groupId: String
-)
+data object NewGroupRoute
+
 @Serializable
 object AccountSettings
