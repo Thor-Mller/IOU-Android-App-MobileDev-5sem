@@ -71,7 +71,7 @@ fun ReAuthScreen(
         )
 
         val info = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Lås IOU op")
+            .setTitle("Unlock IOU")
             .setSubtitle("Use Biometrics or PIN")
             .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
             .build()

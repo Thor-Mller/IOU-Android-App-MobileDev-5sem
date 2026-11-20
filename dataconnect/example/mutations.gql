@@ -3,7 +3,7 @@
 # Create the current user profile using firebase auth id
 mutation CreateCurrentUser(
   $username: String!
-  $phone: String!
+  $phone: String
   $email: String!
 ) @auth(level: USER) {
   user_upsert(
@@ -12,8 +12,8 @@ mutation CreateCurrentUser(
       username: $username
       phone: $phone
       email: $email
-      totalMissing: 0.0
-      totalDebt: 0.0
+        totalMissing: 0
+        totalDebt: 0
     }
   )
 }
@@ -57,7 +57,7 @@ mutation DeleteCurrentUser @auth(level: USER) @transaction {
 
 mutation CreateExpense(
   $name: String!
-  $amount: Float!
+    $amount: Int!
   $groupId: UUID!
 ) @auth(level: USER) @transaction {
   query @redact {
@@ -71,6 +71,7 @@ mutation CreateExpense(
       userId_expr: "auth.uid"
       name: $name
       amount: $amount
+        payed: 0
       groupId: $groupId
     }
   )
@@ -79,7 +80,7 @@ mutation CreateExpense(
 mutation AddDebtorToExpense(
   $expenseId: UUID!
   $debtorUserId: String!
-  $shareAmount: Float!
+    $shareAmount: Int!
 ) @auth(level: USER) @transaction {
   query @redact {
     expense(key: { id: $expenseId })
@@ -121,6 +122,50 @@ mutation RemoveDebtorFromExpense(
     key: {
       expenseId: $expenseId
       userId: $debtorUserId
+    }
+  )
+}
+
+mutation AddPaymentToExpense(
+  $expenseId: UUID!
+    $paymentAmount: Int!
+) @auth(level: USER) @transaction {
+  query @redact {
+    expense(key: { id: $expenseId })
+    @check(expr: "this != null", message: "Expense not found") {
+      id
+    }
+
+      expenseProvider(
+          key: { expenseId: $expenseId, userId_expr: "auth.uid" }
+    )
+    @check(
+        expr: "this != null && this.shareAmount != null && vars.paymentAmount > 0 && this.shareAmount >= vars.paymentAmount"
+        message: "Payment must be greater than 0 and cannot exceed your remaining share"
+    ) {
+      shareAmount
+    }
+  }
+
+  expense_update(
+    key: { id: $expenseId }
+    data: {
+        payed_update: { inc: $paymentAmount }
+    }
+  )
+
+  expenseProvider_update(
+      key: { expenseId: $expenseId, userId_expr: "auth.uid" }
+    data: {
+        shareAmount_update: { dec: $paymentAmount }
+    }
+  )
+
+  expenseProvider_deleteMany(
+    where: {
+      expenseId: { eq: $expenseId }
+      userId: { eq_expr: "auth.uid" }
+        shareAmount: { le: 0 }
     }
   )
 }

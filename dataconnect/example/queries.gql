@@ -168,3 +168,65 @@ query GetCurrentGroups @auth(level: USER) {
     }
   }
 }
+
+query GetExpensesInGroup($groupId: UUID!) @auth(level: USER) {
+  expenses (where: { group: { id: { eq: $groupId } }}) {
+      id
+      group {
+        id
+        name
+        creator {
+          id
+          username
+        }
+      }
+      userId
+      name
+      amount
+      payed
+    }
+  }
+
+query GetCurrentUserSharesInGroup($groupId: UUID!) @auth(level: USER) {
+  expenses (where: { group: { id: { eq: $groupId } }}) {
+    id
+    group {
+      id
+      name
+      creator {
+        id
+        username
+      }
+    }
+    userId
+    name
+    amount
+  }
+}
+
+query GetGroupById($groupId: UUID!) @auth(level: USER, insecureReason: "Authenticated users can view details groups") {
+  group(key: { id: $groupId }) {
+    id
+    name
+    creator {
+      id
+      username
+    }
+  }
+}
+
+query GetUserExpenseShareInGroup($groupId: UUID!) @auth(level: USER) {
+  expenseProviders(
+    where: {
+      user: { id: { eq_expr: "auth.uid" } },
+      expense: { groupId: { eq: $groupId } }
+    }
+  ) {
+    shareAmount
+    expense {
+      id
+      name
+      amount
+    }
+  }
+}

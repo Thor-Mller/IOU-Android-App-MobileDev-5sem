@@ -6,60 +6,100 @@ import androidx.compose.material3.SliderState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.freaky.iou.ui.payment.models.PaymentState
+import androidx.lifecycle.viewModelScope
+import com.freaky.iou.ui.data.Database
+import com.freaky.iou.ui.helpers.parseToCents
+import com.freaky.iou.ui.helpers.toKrString
+import com.freaky.iou.ui.payment.states.PaymentState
+import kotlinx.coroutines.launch
+import java.util.UUID
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
-class PaymentViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private val initialExpense: Float = savedStateHandle.get<Float>("initialAmount") ?: 0f
+class PaymentViewModel(
+    private val expenseId: UUID,
+    payAmount: Int
+) : ViewModel() {
+
+    private val maxAmountCents: Int = payAmount.coerceAtLeast(0)
+    private var lastTextDrivenSliderCents: Int? = null
 
     var state: PaymentState by mutableStateOf(
         PaymentState(
             sliderState = SliderState(
-                value = initialExpense, valueRange = 0f..initialExpense
-            ), amountState = TextFieldState(
-                initialText = initialExpense.toString()
+                value = maxAmountCents.toFloat(),
+                steps = 9,
+                valueRange = 0f..maxAmountCents.toFloat()
+            ),
+            amountState = TextFieldState(
+                initialText = maxAmountCents.toKrString(showKr = false)
             )
         )
     )
+        private set
 
-    fun onSliderChange() {
-        val rawValue = state.sliderState.value
-        val formatted = formatAmount(rawValue)
+    fun onSliderChange(): Boolean {
+        val cents = state.sliderState.value.roundToInt().coerceIn(0, maxAmountCents)
+        if (cents == lastTextDrivenSliderCents) {
+            lastTextDrivenSliderCents = null
+            return false
+        }
+        lastTextDrivenSliderCents = null
 
-        // Only update text field if the formatted text actually differs
+        val formatted = cents.toKrString(showKr = false)
         if (state.amountState.text.toString() != formatted) {
             state.amountState.edit {
                 replace(0, length, formatted)
             }
         }
+        return true
     }
 
     fun onNumberFieldChange() {
         val text = state.amountState.text.toString().trim().replace(',', '.')
-
-        // Don't update slider if input is empty or trailing decimal point
         if (text.isEmpty() || text.endsWith('.')) return
 
-        val parsed = text.toFloatOrNull() ?: return
-        val clamped = parsed.coerceIn(
-            state.sliderState.valueRange.start,
-            state.sliderState.valueRange.endInclusive
-        )
+        val cents = parseToCents(text) ?: return
+        val previousSnapped = state.sliderState.value.roundToInt()
 
-        if (state.sliderState.value != clamped) {
-            state.sliderState.value = clamped
+        state.sliderState.value = cents.toFloat()
+
+        val newSnapped = state.sliderState.value.roundToInt()
+        if (newSnapped != previousSnapped) {
+            lastTextDrivenSliderCents = newSnapped
         }
     }
 
-    private fun formatAmount(value: Float): String {
-        val rounded = (value * 100f).roundToInt() / 100f
-        return if (rounded % 1f == 0f) {
-            rounded.toInt().toString()
-        } else {
-            rounded.toString()
+    fun onPay(onSuccess: () -> Unit = {}) {
+        if (state.isLoading) return
+
+        val rawText = state.amountState.text.toString()
+        val amountCents = (parseToCents(rawText) ?: state.sliderState.value.roundToInt())
+            .coerceIn(0, maxAmountCents)
+
+        if (amountCents <= 0) {
+            state = state.copy(error = "Payment amount must be greater than 0.")
+            return
+        }
+
+        viewModelScope.launch {
+            state = state.copy(isLoading = true, error = null)
+
+            Database.addPaymentToExpense(
+                expenseId = expenseId,
+                paymentAmount = amountCents
+            )
+                .onSuccess {
+                    state = state.copy(isLoading = false)
+                    onSuccess()
+                }
+                .onFailure { throwable ->
+                    state = state.copy(
+                        isLoading = false,
+                        error = throwable.message ?: "Payment failed."
+                    )
+                }
         }
     }
 }

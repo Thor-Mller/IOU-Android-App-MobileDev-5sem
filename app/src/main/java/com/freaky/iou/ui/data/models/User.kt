@@ -4,8 +4,8 @@ data class User(
     val id: String = "",
     val username: String = "",
     val email: String = "",
-    val phone: String = "",
+    val phone: String? = null,
     val password: String = "",
-    val totalMissing: Double = 0.0,
-    val totalDebt: Double = 0.0,
+    val totalMissing: Int = 0,
+    val totalDebt: Int = 0,
 )

@@ -18,7 +18,18 @@ object ReAuthRoute
 object HomeRoute
 
 @Serializable
-object NewGroupRoute
+data class GroupRoute(val groupId: String)
+
+@Serializable
+data class NewExpenseRoute(val groupId: String)
+
+@Serializable
+data class PaymentRoute(
+    val expenseId: String,
+    val payAmount: Int
+)
+@Serializable
+data object NewGroupRoute
 
 @Serializable
 object AccountSettings

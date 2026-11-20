@@ -35,15 +35,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.freaky.iou.ui.newgroup.components.MemberCard
 import com.freaky.iou.ui.theme.IOUTheme
+import java.util.UUID
 
 @Composable
 fun NewGroupScreen(
     viewModel: NewGroupViewModel = viewModel(),
     onCancel: () -> Unit = {},
-    onGroupCreated: () -> Unit = {},
+    onGroupCreated: (UUID) -> Unit = {},
 ) {
     val state = viewModel.state
-
     val scope = rememberCoroutineScope()
 
     Surface(

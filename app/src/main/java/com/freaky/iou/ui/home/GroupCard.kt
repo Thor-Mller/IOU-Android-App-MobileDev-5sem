@@ -24,8 +24,15 @@ import com.freaky.iou.ui.theme.IOUTheme
 import java.util.UUID
 
 @Composable
-fun GroupCard(group: Group, modifier: Modifier = Modifier) {
-    Card(modifier = modifier.fillMaxWidth()) {
+fun GroupCard(
+    group: Group,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth()
+    ) {
         Column {
             Box(
                 modifier = Modifier
