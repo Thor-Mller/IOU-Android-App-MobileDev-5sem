@@ -6,37 +6,50 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.freaky.iou.ui.data.Database
-import com.freaky.iou.ui.payment.models.ExpenseState
-import com.google.firebase.dataconnect.generated.SearchUsersInGroupQuery
+import com.freaky.iou.ui.data.models.User
+import com.freaky.iou.ui.payment.states.ExpenseState
 import kotlinx.coroutines.launch
+import java.math.RoundingMode
 import java.util.UUID
-import kotlin.collections.plus
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 class NewExpenseViewModel(
     initialTitle: String = "",
-    initialAmount: Double = 0.0,
+    initialAmount: Int = 0,
     initialGroupId: UUID = UUID.randomUUID(),
     initialMembers: List<String> = listOfNotNull(Database.currentUser?.uid)
 ) : ViewModel() {
 
-    init {
-        loadGroupMembers(initialGroupId)
+    companion object {
+        // 10,000 basis points = 100.00% (100 bps = 1%)
+        const val FULL_SPLIT_BPS = 10_000
     }
+
     var uiState by mutableStateOf(
         ExpenseState(
             title = initialTitle,
             groupId = initialGroupId,
             totalAmount = initialAmount,
-            memberPercentages = if (initialMembers.isNotEmpty()) {
-                val equalShare = 100f / initialMembers.size
-                initialMembers.associateWith { equalShare }
-            } else {
-                emptyMap()
-            },
-        ))
+            memberPercentages = splitEquallyBps(initialMembers)
+        )
+    )
         private set
+
+    var isSaving by mutableStateOf(false)
+        private set
+
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
+
+    var searchResults by mutableStateOf<List<User>>(emptyList())
+        private set
+
+    var selectedSearchUser by mutableStateOf(User())
+        private set
+
+    init {
+        loadGroupMembers(initialGroupId)
+    }
+
     fun loadGroupMembers(groupId: UUID) {
         viewModelScope.launch {
             Database.getUsersInGroup(groupId).onSuccess { users ->
@@ -51,38 +64,37 @@ class NewExpenseViewModel(
             }
         }
     }
-    var isSaving by mutableStateOf(false)
-        private set
-
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
-    var searchResults by mutableStateOf<List<SearchUsersInGroupQuery.Data.GroupUsersItem.User>>(
-        emptyList()
-    )
-        private set
-    var selectedSearchUser by mutableStateOf<SearchUsersInGroupQuery.Data.GroupUsersItem.User?>(null)
-        private set
 
     fun onTitleChange(newTitle: String) {
         uiState = uiState.copy(title = newTitle)
     }
 
     fun onTotalAmountTextChange(text: String) {
-        val parsed = text.replace(',', '.').toDoubleOrNull() ?: 0.0
-        uiState = uiState.copy(totalAmount = parsed)
+        val normalized = text.trim().replace(',', '.')
+        val cents = normalized.toBigDecimalOrNull()
+            ?.movePointRight(2)
+            ?.setScale(0, RoundingMode.HALF_UP)
+            ?.toLong()
+            ?.coerceIn(0L, Int.MAX_VALUE.toLong())
+            ?.toInt()
+            ?: 0
+        uiState = uiState.copy(totalAmount = cents)
     }
 
-    fun onMemberPercentageChange(memberId: String, percentage: Float) {
-        val updated = uiState.memberPercentages + (memberId to percentage)
+    /**
+     * Pass percentage in basis points (e.g., 5000 = 50.00%, 3333 = 33.33%).
+     * Convert slider/text input to Int basis points on the screen before calling.
+     */
+    fun onMemberPercentageChange(memberId: String, basisPoints: Int) {
+        val clamped = basisPoints.coerceIn(0, FULL_SPLIT_BPS)
+        val updated = uiState.memberPercentages + (memberId to clamped)
         uiState = uiState.copy(memberPercentages = updated)
     }
 
     fun splitEqually() {
         val memberList = uiState.getMembers().toList()
         if (memberList.isEmpty()) return
-        val equalShare = 100f / memberList.size
-        val updated = memberList.associateWith { equalShare }
-        uiState = uiState.copy(memberPercentages = updated)
+        uiState = uiState.copy(memberPercentages = splitEquallyBps(memberList))
     }
 
     fun addDebtor(userId: String, username: String? = null) {
@@ -97,63 +109,68 @@ class NewExpenseViewModel(
         }
 
         uiState = uiState.copy(
-            memberPercentages = updatedMembers.associateWith { 0f },
+            memberPercentages = splitEquallyBps(updatedMembers),
             memberNamesToIds = updatedMap
         )
-
-        splitEqually()
     }
 
     fun removeDebtor(debtorUserId: String) {
         if (!uiState.getMembers().contains(debtorUserId)) return
 
+        val remainingMembers = uiState.getMembers().filterNot { it == debtorUserId }
         uiState = uiState.copy(
-            memberPercentages = uiState.memberPercentages - debtorUserId,
+            memberPercentages = splitEquallyBps(remainingMembers),
             memberNamesToIds = uiState.memberNamesToIds.filterValues { it != debtorUserId }
         )
     }
 
     fun submitExpense(onSuccess: (ExpenseState) -> Unit) {
-        if (!uiState.isSplitValid || uiState.title.isBlank() || uiState.totalAmount <= 0.0) return
+        if (!uiState.isSplitValid || uiState.title.isBlank() || uiState.totalAmount <= 0) return
         if (isSaving) return
 
         viewModelScope.launch {
             isSaving = true
             errorMessage = null
 
-            // 1. Create the main Expense row
-            val expenseResult = Database.createExpense(
-                name = uiState.title.trim(), amount = uiState.totalAmount, groupId = uiState.groupId
+            val exactShares = calculateExactShares(
+                totalCents = uiState.totalAmount,
+                memberBps = uiState.memberPercentages
             )
 
-            expenseResult.fold(onSuccess = { expenseId ->
-                val participants = uiState.getMembers().filter { memberId ->
-                    uiState.amountForMember(memberId) > 0.0
-                }
+            val expenseResult = Database.createExpense(
+                name = uiState.title.trim(),
+                amount = uiState.totalAmount,
+                groupId = uiState.groupId
+            )
 
-                for (memberId in participants) {
-                    val share = uiState.amountForMember(memberId)
-                    val result = Database.addDebtorToExpense(
-                        expenseId = expenseId,
-                        debtorUserId = memberId,
-                        shareAmount = share
-                    )
+            expenseResult.fold(
+                onSuccess = { expenseId ->
+                    for ((memberId, shareCents) in exactShares) {
+                        if (shareCents <= 0) continue
 
-                    if (result.isFailure) {
-                        Database.deleteExpense(expenseId)
-                        isSaving = false
-                        errorMessage = result.exceptionOrNull()?.localizedMessage
-                            ?: "Failed to add member to expense."
-                        return@launch
+                        val result = Database.addDebtorToExpense(
+                            expenseId = expenseId,
+                            debtorUserId = memberId,
+                            shareAmount = shareCents
+                        )
+
+                        if (result.isFailure) {
+                            Database.deleteExpense(expenseId)
+                            isSaving = false
+                            errorMessage = result.exceptionOrNull()?.localizedMessage
+                                ?: "Failed to add member to expense."
+                            return@launch
+                        }
                     }
-                }
 
-                isSaving = false
-                onSuccess(uiState)
-            }, onFailure = { error ->
-                isSaving = false
-                errorMessage = error.localizedMessage ?: "Failed to create expense."
-            })
+                    isSaving = false
+                    onSuccess(uiState)
+                },
+                onFailure = { error ->
+                    isSaving = false
+                    errorMessage = error.localizedMessage ?: "Failed to create expense."
+                }
+            )
         }
     }
 
@@ -172,12 +189,46 @@ class NewExpenseViewModel(
             }
     }
 
-    fun selectSearchUser(user: SearchUsersInGroupQuery.Data.GroupUsersItem.User) {
+    fun selectSearchUser(user: User) {
         selectedSearchUser = user
         searchResults = emptyList()
     }
+
     fun clearUserSearch() {
-        selectedSearchUser = null
+        selectedSearchUser = User()
         searchResults = emptyList()
+    }
+
+    private fun splitEquallyBps(members: Collection<String>): Map<String, Int> {
+        if (members.isEmpty()) return emptyMap()
+        val base = FULL_SPLIT_BPS / members.size
+        val remainder = FULL_SPLIT_BPS % members.size
+        return members.mapIndexed { index, id ->
+            id to (base + if (index < remainder) 1 else 0)
+        }.toMap()
+    }
+
+    private fun calculateExactShares(
+        totalCents: Int,
+        memberBps: Map<String, Int>
+    ): Map<String, Int> {
+        val entries = memberBps.entries.filter { it.value > 0 }
+        val totalBps = entries.sumOf { it.value.toLong() }
+        if (entries.isEmpty() || totalCents <= 0 || totalBps <= 0L) return emptyMap()
+
+        val rawShares = entries.map { (id, bps) ->
+            val numerator = totalCents.toLong() * bps.toLong()
+            val base = (numerator / totalBps).toInt()
+            val remainder = numerator % totalBps
+            Triple(id, base, remainder)
+        }
+
+        val leftoverCents = totalCents - rawShares.sumOf { it.second }
+        return rawShares
+            .sortedByDescending { it.third }
+            .mapIndexed { index, (id, base, _) ->
+                id to (base + if (index < leftoverCents) 1 else 0)
+            }
+            .toMap()
     }
 }

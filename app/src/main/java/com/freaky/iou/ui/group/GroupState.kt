@@ -7,8 +7,9 @@ import com.freaky.iou.ui.data.models.Group
 data class GroupState(
     val group: Group? = null,
     val groupNameState: TextFieldState = TextFieldState(""),
-    val expenses: List<Expense> = emptyList(),
-    val userShares: Map<Expense, Float> = emptyMap(),
+    val activeExpenses: List<Expense> = emptyList(),
+    val archivedExpenses: List<Expense> = emptyList(),
+    val userShares: Map<Expense, Int> = emptyMap(),
     val isLoading: Boolean = false,
     val error: String? = null
 )

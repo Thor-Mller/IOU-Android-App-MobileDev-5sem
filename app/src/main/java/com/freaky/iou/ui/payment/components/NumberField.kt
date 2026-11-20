@@ -17,6 +17,7 @@ fun NumberField(
     modifier: Modifier = Modifier,
     allowDecimals: Boolean = true,
     label: String = "Amount",
+    suffix: String = ""
 ) {
     OutlinedTextField(
         state = state,
@@ -26,8 +27,9 @@ fun NumberField(
         keyboardOptions = KeyboardOptions(
             keyboardType = if (allowDecimals) KeyboardType.Decimal else KeyboardType.Number
         ),
+        suffix = { Text(suffix) },
         inputTransformation = {
-            if (!asCharSequence().all { it.isDigit() }) {
+            if (!asCharSequence().all { it.isDigit() || it == '.' || it == ',' }) {
                 revertAllChanges()
             }
         }
@@ -38,6 +40,6 @@ fun NumberField(
 @Composable
 fun NumberFieldPreview() {
     IOUTheme {
-        NumberField(TextFieldState("0"))
+        NumberField(TextFieldState("0"), suffix = "kr.")
     }
 }

@@ -183,6 +183,7 @@ query GetExpensesInGroup($groupId: UUID!) @auth(level: USER) {
       userId
       name
       amount
+      payed
     }
   }
 

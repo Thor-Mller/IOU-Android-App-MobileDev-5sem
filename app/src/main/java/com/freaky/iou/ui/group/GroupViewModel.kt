@@ -34,32 +34,25 @@ class GroupViewModel(
             val expensesResult = expensesDeferred.await()
             val userSharesResult = userSharesDeferred.await()
 
-            groupResult
-                .onSuccess { group ->
-                    groupState.groupNameState.setTextAndPlaceCursorAtEnd(group.name)
-                    groupState = groupState.copy(group = group)
-                }
-                .onFailure { throwable ->
-                    groupState = groupState.copy(error = throwable.message)
-                }
+            groupResult.onSuccess { group ->
+                groupState.groupNameState.setTextAndPlaceCursorAtEnd(group.name)
+            }
 
-            expensesResult
-                .onSuccess { expenses ->
-                    groupState = groupState.copy(expenses = expenses)
-                }
-                .onFailure { throwable ->
-                    groupState = groupState.copy(error = throwable.message)
-                }
+            val (activeExpenses, archivedExpenses) = expensesResult.getOrNull()
+                ?.partition { it.payed < it.amount }
+                ?: (groupState.activeExpenses to groupState.archivedExpenses)
 
-            userSharesResult
-                .onSuccess { userShares ->
-                    groupState = groupState.copy(userShares = userShares)
-                }
-                .onFailure { throwable ->
-                    groupState = groupState.copy(error = throwable.message)
-                }
+            val firstError = listOf(groupResult, expensesResult, userSharesResult)
+                .firstNotNullOfOrNull { it.exceptionOrNull()?.message }
 
-            groupState = groupState.copy(isLoading = false)
+            groupState = groupState.copy(
+                group = groupResult.getOrDefault(groupState.group),
+                activeExpenses = activeExpenses,
+                archivedExpenses = archivedExpenses,
+                userShares = userSharesResult.getOrDefault(groupState.userShares),
+                error = firstError,
+                isLoading = false
+            )
         }
     }
 }

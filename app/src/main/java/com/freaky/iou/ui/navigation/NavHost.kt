@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.freaky.iou.ui.accountsettings.AccountSettingsView
 import androidx.navigation.toRoute
+import com.freaky.iou.ui.accountsettings.AccountSettingsView
 import com.freaky.iou.ui.auth.login.LoginScreen
 import com.freaky.iou.ui.auth.signup.SignupScreen
 import com.freaky.iou.ui.expense.NewExpenseViewModel
@@ -17,10 +17,10 @@ import com.freaky.iou.ui.group.GroupScreen
 import com.freaky.iou.ui.group.GroupViewModel
 import com.freaky.iou.ui.home.HomeScreen
 import com.freaky.iou.ui.newgroup.NewGroupScreen
-import com.freaky.iou.ui.reauth.ReAuthScreen
 import com.freaky.iou.ui.payment.viewmodels.PaymentViewModel
 import com.freaky.iou.ui.payment.views.NewExpenseScreen
 import com.freaky.iou.ui.payment.views.PaymentScreen
+import com.freaky.iou.ui.reauth.ReAuthScreen
 import com.freaky.iou.ui.splash.SplashScreen
 import kotlinx.serialization.Serializable
 import java.util.UUID
@@ -174,6 +174,9 @@ fun AppNavigation() {
                 NewExpenseScreen(
                     viewModel = expenseViewModel,
                     onCreate = {
+                        navController.navigateUp()
+                    },
+                    onCancel = {
                         navController.navigateUp()
                     }
                 )

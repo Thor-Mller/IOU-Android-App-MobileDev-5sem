@@ -1,26 +1,25 @@
-
 # User table is keyed by Firebase Auth UID.
 type User @table {
   id: String! @default(expr: "auth.uid")
   username: String! @unique @col(dataType: "varchar(50)")
   phone: String @unique @col(dataType: "varchar(50)")
   email: String! @unique @col(dataType: "varchar(50)")
-  totalMissing: Float! @col(dataType: "numeric(10, 2)")
-  totalDebt: Float! @col(dataType: "numeric(10, 2)")
+    totalMissing: Int! @col(dataType: "bigint")
+    totalDebt: Int! @col(dataType: "bigint")
 }
 
 type Expense @table {
   user: User!
   name: String! @col(dataType: "varchar(50)")
-  amount: Float! @col(dataType: "numeric(10, 2)")
-  payed: Float! @col(dataType: "numeric(10, 2)") @default(value: 0.0)
+    amount: Int! @col(dataType: "bigint")
+    payed: Int! @col(dataType: "bigint") @default(value: 0)
   group: Group!
 }
 
 type ExpenseProvider @table(key: ["expense", "user"]) {
   expense: Expense!
   user: User!
-  shareAmount: Float @col(dataType: "numeric(10, 2)")
+    shareAmount: Int @col(dataType: "bigint")
 }
 
 type Group @table {
@@ -32,4 +31,3 @@ type GroupUser @table(key: ["group", "user"]) {
   group: Group!
   user: User!
 }
-

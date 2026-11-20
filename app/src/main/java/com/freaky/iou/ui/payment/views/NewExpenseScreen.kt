@@ -28,7 +28,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -42,27 +41,27 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.freaky.iou.ui.payment.models.ExpenseState
 import com.freaky.iou.ui.expense.NewExpenseViewModel
+import com.freaky.iou.ui.helpers.formatPercent
+import com.freaky.iou.ui.helpers.toKrString
 import com.freaky.iou.ui.payment.components.NumberField
+import com.freaky.iou.ui.payment.states.ExpenseState
 import com.freaky.iou.ui.theme.IOUTheme
-import java.util.UUID
-import kotlin.math.roundToInt
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import java.util.UUID
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -75,10 +74,10 @@ fun NewExpenseScreen(
     val searchPeopleState = rememberTextFieldState("")
     val titleState = rememberTextFieldState(state.title)
     val amountState = rememberTextFieldState(
-        if (state.totalAmount > 0.0) state.totalAmount.roundToInt().toString() else ""
+        if (state.totalAmount > 0) state.totalAmount.toKrString() else ""
     )
-    // Maps userId -> username so the split table displays names instead of raw UIDs
-    val memberNames = remember { mutableStateMapOf<String, String>() }
+
+    val hasSelectedUser = viewModel.selectedSearchUser.id.isNotBlank()
 
     LaunchedEffect(titleState) {
         snapshotFlow { titleState.text.toString() }
@@ -90,15 +89,14 @@ fun NewExpenseScreen(
             .collect { viewModel.onTotalAmountTextChange(it) }
     }
 
-    // Debounced search for users in the group by username, email, or phone
-    LaunchedEffect(viewModel.uiState.groupId, searchPeopleState) {
+    LaunchedEffect(state.groupId, searchPeopleState) {
         snapshotFlow { searchPeopleState.text.toString() }
             .debounce(300)
             .distinctUntilChanged()
             .collect { query ->
-                if (viewModel.selectedSearchUser?.username != query) {
+                if (viewModel.selectedSearchUser.username != query) {
                     viewModel.clearUserSearch()
-                    viewModel.searchUsersInGroup(viewModel.uiState.groupId, query)
+                    viewModel.searchUsersInGroup(state.groupId, query)
                 }
             }
     }
@@ -123,7 +121,7 @@ fun NewExpenseScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            HorizontalDivider(thickness = 2.dp, color = Color.Black)
+            HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outline)
 
             // 1. Expense Name Input
             Column(
@@ -138,7 +136,8 @@ fun NewExpenseScreen(
                 OutlinedTextField(
                     state = titleState,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
+                    lineLimits = TextFieldLineLimits.SingleLine
                 )
             }
 
@@ -169,16 +168,15 @@ fun NewExpenseScreen(
                 textAlign = TextAlign.Start
             )
 
-            // Split Mode / Hint
             Text(
                 text = "Enter percentages for each member.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.DarkGray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
             )
 
-            // Search People & Add Button (around line 155)
+            // Search People & Add Button
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -194,20 +192,20 @@ fun NewExpenseScreen(
                     )
                     Button(
                         onClick = {
-                            viewModel.selectedSearchUser?.let { selectedUser ->
+                            val selectedUser = viewModel.selectedSearchUser
+                            if (selectedUser.id.isNotBlank()) {
                                 viewModel.addDebtor(selectedUser.id, selectedUser.username)
                                 searchPeopleState.clearText()
                                 viewModel.clearUserSearch()
                             }
                         },
-                        enabled = !viewModel.isSaving && viewModel.selectedSearchUser != null,
+                        enabled = !viewModel.isSaving && hasSelectedUser,
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text("Add", fontSize = 16.sp)
                     }
                 }
 
-                // Matching Group Members Dropdown
                 if (viewModel.searchResults.isNotEmpty()) {
                     ElevatedCard(
                         modifier = Modifier
@@ -217,9 +215,15 @@ fun NewExpenseScreen(
                     ) {
                         Column {
                             viewModel.searchResults.forEach { user ->
+                                val details = listOfNotNull(user.email, user.phone)
+                                    .filter { it.isNotBlank() }
+                                    .joinToString(" • ")
+
                                 ListItem(
                                     headlineContent = { Text(user.username) },
-                                    supportingContent = { Text("${user.email} • ${user.phone}") },
+                                    supportingContent = {
+                                        if (details.isNotEmpty()) Text(details)
+                                    },
                                     modifier = Modifier.clickable {
                                         searchPeopleState.setTextAndPlaceCursorAtEnd(user.username)
                                         viewModel.selectSearchUser(user)
@@ -235,7 +239,7 @@ fun NewExpenseScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+                    .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
@@ -248,28 +252,30 @@ fun NewExpenseScreen(
                         text = "Member",
                         modifier = Modifier.weight(1.5f),
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = "%",
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = "kr",
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.End,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.width(32.dp))
                 }
 
                 // Member Rows
                 state.getMembers().forEach { memberId ->
-                    val percentage = state.memberPercentages[memberId] ?: 0f
-                    val amountOwed = state.amountForMember(memberId)
+                    val bps = state.memberPercentages[memberId] ?: 0
+                    val wholePercent = bps / 100
+                    val amountOwedOre = state.amountForMember(memberId)
                     val displayName = state.memberNamesToIds
                         .entries
                         .firstOrNull { it.value == memberId }
@@ -279,7 +285,6 @@ fun NewExpenseScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Member Username (falls back to memberId for pre-populated members)
                         Text(
                             text = displayName,
                             modifier = Modifier.weight(1.5f),
@@ -287,60 +292,70 @@ fun NewExpenseScreen(
                             fontSize = 18.sp
                         )
 
-                        // % Input
+                        // % Input (whole percent in UI -> basis points in ViewModel)
                         Box(
                             modifier = Modifier.weight(1f),
                             contentAlignment = Alignment.Center
                         ) {
                             BasicTextField(
-                                value = if (percentage == 0f) "" else percentage.toInt().toString(),
+                                value = if (wholePercent == 0) "" else wholePercent.toString(),
                                 onValueChange = { input ->
-                                    val parsed = input.filter { it.isDigit() }.toFloatOrNull() ?: 0f
-                                    viewModel.onMemberPercentageChange(memberId, parsed)
+                                    val digits = input.filter { it.isDigit() }.take(3)
+                                    val pct = (digits.toIntOrNull() ?: 0).coerceIn(0, 100)
+                                    viewModel.onMemberPercentageChange(memberId, pct * 100)
                                 },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
+                                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                                 textStyle = MaterialTheme.typography.bodyLarge.copy(
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     textAlign = TextAlign.Center,
                                     fontWeight = FontWeight.Medium
                                 ),
                                 modifier = Modifier
                                     .width(64.dp)
-                                    .border(1.5.dp, Color.Black, RoundedCornerShape(6.dp))
+                                    .border(
+                                        1.5.dp,
+                                        MaterialTheme.colorScheme.outline,
+                                        RoundedCornerShape(6.dp)
+                                    )
                                     .padding(vertical = 6.dp)
                             )
                         }
 
                         // Calculated kr
                         Text(
-                            text = amountOwed.roundToInt().toString(),
+                            text = amountOwedOre.toKrString(),
                             modifier = Modifier.weight(1f),
                             textAlign = TextAlign.End,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Normal
+                            fontSize = 16.sp
                         )
+
                         IconButton(
-                            onClick = {
-                                memberNames.remove(memberId)
-                                viewModel.removeDebtor(memberId)
-                            },
+                            onClick = { viewModel.removeDebtor(memberId) },
                             enabled = !viewModel.isSaving,
                             modifier = Modifier.size(32.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Remove $displayName",
-                                tint = Color.DarkGray,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
                     }
                 }
 
-                HorizontalDivider(thickness = 1.5.dp, color = Color.Black)
+                HorizontalDivider(thickness = 1.5.dp, color = MaterialTheme.colorScheme.outline)
 
                 // Total Summary Row
-                val totalPercent = state.memberPercentages.values.sum()
+                val totalBps = state.memberPercentages.values.sum()
+                val totalPercentColor = if (state.isSplitValid) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.error
+                }
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -352,18 +367,19 @@ fun NewExpenseScreen(
                         fontSize = 18.sp
                     )
                     Text(
-                        text = "${totalPercent.roundToInt()}%",
+                        text = formatPercent(totalBps),
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        color = totalPercentColor
                     )
                     Text(
-                        text = "${state.totalAmount.roundToInt()} kr",
+                        text = state.totalAmount.toKrString(),
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.End,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontSize = 16.sp
                     )
                     Spacer(modifier = Modifier.width(32.dp))
                 }
@@ -389,28 +405,23 @@ fun NewExpenseScreen(
                     onClick = onCancel,
                     enabled = !viewModel.isSaving,
                     modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text("Cancel", fontSize = 18.sp)
                 }
 
                 Button(
-                    onClick = {
-                        viewModel.submitExpense(onSuccess = onCreate)
-                    },
+                    onClick = { viewModel.submitExpense(onSuccess = onCreate) },
                     enabled = !viewModel.isSaving &&
                             state.isSplitValid &&
                             state.title.isNotBlank() &&
-                            state.totalAmount > 0.0,
+                            state.totalAmount > 0,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     if (viewModel.isSaving) {
                         CircularProgressIndicator(
-                            modifier = Modifier
-                                .height(22.dp)
-                                .width(22.dp),
+                            modifier = Modifier.size(22.dp),
                             strokeWidth = 2.dp,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
@@ -430,13 +441,13 @@ fun NewExpenseScreenPreview() {
         val mockViewModel = remember {
             NewExpenseViewModel(
                 initialTitle = "Groceries",
-                initialAmount = 300.0,
+                initialAmount = 30_000, // 300.00 kr in øre
                 initialGroupId = UUID.randomUUID(),
                 initialMembers = listOf("Person 1", "Person 2", "Person 3")
             ).apply {
-                onMemberPercentageChange("Person 1", 50f)
-                onMemberPercentageChange("Person 2", 30f)
-                onMemberPercentageChange("Person 3", 20f)
+                onMemberPercentageChange("Person 1", 5_000)
+                onMemberPercentageChange("Person 2", 3_000)
+                onMemberPercentageChange("Person 3", 2_000)
             }
         }
 

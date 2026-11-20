@@ -26,13 +26,17 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.freaky.iou.ui.payment.components.NumberField
 import com.freaky.iou.ui.payment.viewmodels.PaymentViewModel
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import java.util.UUID
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,19 +45,22 @@ fun PaymentScreen(
     onPaymentSuccess: () -> Unit = {}
 ) {
     val state = viewModel.state
+    val haptic = LocalHapticFeedback.current
+    val maxAmountKr = state.sliderState.valueRange.endInclusive.roundToInt() / 100.0
 
-    // Live sync: when the user drags the slider, update the text field
     LaunchedEffect(state.sliderState) {
-        snapshotFlow { state.sliderState.value }
+        snapshotFlow { state.sliderState.value.roundToInt() }
             .distinctUntilChanged()
+            .drop(1)
             .collect {
-                viewModel.onSliderChange()
+                if (viewModel.onSliderChange()) {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                }
             }
     }
 
-    // Live sync: when the user types, update the slider thumb
     LaunchedEffect(state.amountState) {
-        snapshotFlow { state.amountState.text }
+        snapshotFlow { state.amountState.text.toString() }
             .distinctUntilChanged()
             .collect {
                 viewModel.onNumberFieldChange()
@@ -81,14 +88,15 @@ fun PaymentScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "You owe ${"%.2f".format(state.sliderState.valueRange.endInclusive)} kr",
+                    text = "You owe ${"%.2f".format(maxAmountKr)} kr",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
 
                 NumberField(
                     state = state.amountState,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    suffix = "kr."
                 )
 
                 Slider(
@@ -134,7 +142,7 @@ fun PaymentScreenPreview() {
         val previewViewModel = remember {
             PaymentViewModel(
                 expenseId = UUID.randomUUID(),
-                payAmount = 200f
+                payAmount = 20_000 // 200.00 kr in øre
             )
         }
         PaymentScreen(viewModel = previewViewModel)

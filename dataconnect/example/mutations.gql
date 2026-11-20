@@ -12,8 +12,8 @@ mutation CreateCurrentUser(
       username: $username
       phone: $phone
       email: $email
-      totalMissing: 0.0
-      totalDebt: 0.0
+        totalMissing: 0
+        totalDebt: 0
     }
   )
 }
@@ -57,7 +57,7 @@ mutation DeleteCurrentUser @auth(level: USER) @transaction {
 
 mutation CreateExpense(
   $name: String!
-  $amount: Float!
+    $amount: Int!
   $groupId: UUID!
 ) @auth(level: USER) @transaction {
   query @redact {
@@ -71,7 +71,7 @@ mutation CreateExpense(
       userId_expr: "auth.uid"
       name: $name
       amount: $amount
-      payed: 0.0
+        payed: 0
       groupId: $groupId
     }
   )
@@ -80,7 +80,7 @@ mutation CreateExpense(
 mutation AddDebtorToExpense(
   $expenseId: UUID!
   $debtorUserId: String!
-  $shareAmount: Float!
+    $shareAmount: Int!
 ) @auth(level: USER) @transaction {
   query @redact {
     expense(key: { id: $expenseId })
@@ -128,7 +128,7 @@ mutation RemoveDebtorFromExpense(
 
 mutation AddPaymentToExpense(
   $expenseId: UUID!
-  $paymentAmount: Float!
+    $paymentAmount: Int!
 ) @auth(level: USER) @transaction {
   query @redact {
     expense(key: { id: $expenseId })
@@ -136,16 +136,12 @@ mutation AddPaymentToExpense(
       id
     }
 
-    providers: expenseProviders(
-      where: {
-        expenseId: { eq: $expenseId }
-        userId: { eq_expr: "auth.uid" }
-        shareAmount: { ge: $paymentAmount }
-      }
+      expenseProvider(
+          key: { expenseId: $expenseId, userId_expr: "auth.uid" }
     )
     @check(
-      expr: "size(this) > 0"
-      message: "Payment exceeds your remaining share or you have no share on this expense"
+        expr: "this != null && this.shareAmount != null && vars.paymentAmount > 0 && this.shareAmount >= vars.paymentAmount"
+        message: "Payment must be greater than 0 and cannot exceed your remaining share"
     ) {
       shareAmount
     }
@@ -154,21 +150,14 @@ mutation AddPaymentToExpense(
   expense_update(
     key: { id: $expenseId }
     data: {
-      payed_update: {
-        inc: $paymentAmount
-      }
+        payed_update: { inc: $paymentAmount }
     }
   )
 
   expenseProvider_update(
-    key: {
-      expenseId: $expenseId
-      userId_expr: "auth.uid"
-    }
+      key: { expenseId: $expenseId, userId_expr: "auth.uid" }
     data: {
-      shareAmount_update: {
-        dec: $paymentAmount
-      }
+        shareAmount_update: { dec: $paymentAmount }
     }
   )
 
@@ -176,7 +165,7 @@ mutation AddPaymentToExpense(
     where: {
       expenseId: { eq: $expenseId }
       userId: { eq_expr: "auth.uid" }
-      shareAmount: { le: 0.009 }
+        shareAmount: { le: 0 }
     }
   )
 }

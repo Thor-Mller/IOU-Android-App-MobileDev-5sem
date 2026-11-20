@@ -26,7 +26,7 @@ data class NewExpenseRoute(val groupId: String)
 @Serializable
 data class PaymentRoute(
     val expenseId: String,
-    val payAmount: Float
+    val payAmount: Int
 )
 @Serializable
 data object NewGroupRoute

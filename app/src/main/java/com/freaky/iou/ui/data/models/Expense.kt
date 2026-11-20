@@ -6,7 +6,7 @@ data class Expense(
     val id: UUID = UUID.randomUUID(),
     val user: User = User(),
     val name: String = "",
-    val amount: Float = 0F,
-    val payed: Float = 0F,
+    val amount: Int = 0,
+    val payed: Int = 0,
     val group: Group = Group(),
 )
