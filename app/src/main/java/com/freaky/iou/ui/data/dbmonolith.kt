@@ -175,7 +175,8 @@ object Database {
         search: String
     ): Result<List<User>> = safeCall {
         ensureAuthenticated()
-        val trimmed = search.trim()
+        // Usernames and emails are stored lowercase, and `contains` is case-sensitive
+        val trimmed = search.trim().lowercase()
         if (trimmed.isEmpty()) return@safeCall emptyList()
 
         val response = connector.searchUsersInGroup.execute(
@@ -203,7 +204,8 @@ object Database {
 
     suspend fun searchUsersByUsername(search: String): Result<List<User>> = safeCall {
         ensureAuthenticated()
-        val response = connector.searchUsersByUsername.execute(search = search)
+        // Usernames are stored lowercase, and `contains` is case-sensitive
+        val response = connector.searchUsersByUsername.execute(search = search.trim().lowercase())
         response.data.users.map {it.toUser()}
     }
 

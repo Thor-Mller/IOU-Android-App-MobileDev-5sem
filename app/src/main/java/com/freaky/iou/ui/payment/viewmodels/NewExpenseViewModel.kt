@@ -53,13 +53,12 @@ class NewExpenseViewModel(
     fun loadGroupMembers(groupId: UUID) {
         viewModelScope.launch {
             Database.getUsersInGroup(groupId).onSuccess { users ->
-                val currentMembers = uiState.getMembers().toSet()
-                val resolvedMap = users
-                    .filter { it.id in currentMembers }
-                    .associate { it.username to it.id }
+                // Start the split with every group member, divided equally
+                val memberIds = uiState.getMembers() + users.map { it.id }
 
                 uiState = uiState.copy(
-                    memberNamesToIds = uiState.memberNamesToIds + resolvedMap
+                    memberPercentages = splitEquallyBps(memberIds),
+                    memberNamesToIds = uiState.memberNamesToIds + users.associate { it.username to it.id }
                 )
             }
         }
