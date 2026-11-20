@@ -21,6 +21,9 @@ object HomeRoute
 data class GroupRoute(val groupId: String)
 
 @Serializable
+data class GroupSummaryRoute(val groupId: String)
+
+@Serializable
 data class NewExpenseRoute(val groupId: String)
 
 @Serializable
