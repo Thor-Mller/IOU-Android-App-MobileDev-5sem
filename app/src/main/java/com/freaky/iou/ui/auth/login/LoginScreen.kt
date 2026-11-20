@@ -98,6 +98,10 @@ fun LoginScreen(
                     ) {
                         Text("Sign In")
                     }
+
+                    if (state.error.isNotBlank()) {
+                        Text(state.error, color = MaterialTheme.colorScheme.error)
+                    }
                 }
             }
 

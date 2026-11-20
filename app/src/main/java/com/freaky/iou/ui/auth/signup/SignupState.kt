@@ -7,4 +7,5 @@ data class SignupState(
     val emailState: TextFieldState = TextFieldState(),
     val passwordState: TextFieldState = TextFieldState(),
     val confirmPasswordState: TextFieldState = TextFieldState(),
+    val error: String = "",
 )

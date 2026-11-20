@@ -5,15 +5,36 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.freaky.iou.ui.auth.components.PasswordError
 import com.freaky.iou.ui.data.Database
 import com.freaky.iou.ui.data.models.User
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 
 class SignupViewModel : ViewModel() {
 
-    var state: SignupState by mutableStateOf(SignupState())
+    var state by mutableStateOf(SignupState())
         private set
+
+    init {
+        viewModelScope.launch {
+            snapshotFlow {
+                listOf(
+                    state.usernameState.text,
+                    state.emailState.text,
+                    state.passwordState.text,
+                    state.confirmPasswordState.text
+                )
+            }.drop(1).collect {
+                if (state.error.isNotEmpty()) {
+                    state = state.copy(error = "")
+                }
+            }
+        }
+    }
 
     val isFormValid: Boolean by derivedStateOf {
         state.usernameState.text.isNotBlank() && state.emailState.text.isNotBlank() && isConfirmPasswordValid
@@ -31,6 +52,15 @@ class SignupViewModel : ViewModel() {
         }
     }
 
+    val passwordError: PasswordError? by derivedStateOf {
+        when {
+            state.passwordState.text.isBlank() -> null
+            state.passwordState.text.length < 6 -> PasswordError.TooShort
+            else -> null
+        }
+    }
+
+
     suspend fun onSignupClicked(onSuccess: () -> Unit) {
         if (!isFormValid) return
 
@@ -45,14 +75,15 @@ class SignupViewModel : ViewModel() {
             password = password,
         )
 
-        if (Database.signUp(user).isFailure){
-            return
-        }
-
         state.usernameState.clearText()
         state.emailState.clearText()
         state.passwordState.clearText()
         state.confirmPasswordState.clearText()
+
+        if (Database.signUp(user).isFailure) {
+            state = state.copy(error = "Email/Username already in use!")
+            return
+        }
 
         onSuccess()
     }

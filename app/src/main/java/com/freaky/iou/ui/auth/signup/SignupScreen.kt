@@ -86,7 +86,11 @@ fun SignupScreen(
 
                     EmailTextField(state = state.emailState, required = true)
 
-                    PasswordTextField(state = state.passwordState, required = true)
+                    PasswordTextField(
+                        state = state.passwordState,
+                        required = true,
+                        error = viewModel.passwordError
+                    )
 
                     PasswordTextField(
                         state = state.confirmPasswordState,
@@ -105,6 +109,10 @@ fun SignupScreen(
                         }, enabled = viewModel.isFormValid
                     ) {
                         Text("Sign Up")
+                    }
+
+                    if (state.error.isNotBlank()) {
+                        Text(state.error, color = MaterialTheme.colorScheme.error)
                     }
                 }
             }
