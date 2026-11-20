@@ -22,10 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.freaky.iou.ui.accountsettings.components.ButtonField
 import com.freaky.iou.ui.accountsettings.components.DropdownField
-import com.freaky.iou.ui.accountsettings.components.EditField
+import com.freaky.iou.ui.auth.components.EmailTextField
+import com.freaky.iou.ui.auth.components.UsernameTextField
 import com.freaky.iou.ui.theme.IOUTheme
 import kotlinx.coroutines.launch
 
@@ -36,6 +38,11 @@ fun AccountSettingsView(
 ) {
     val state = viewModel.state
     val scope = rememberCoroutineScope()
+
+    LifecycleResumeEffect(Unit) {
+        viewModel.refresh()
+        onPauseOrDispose { }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -50,11 +57,14 @@ fun AccountSettingsView(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(text = "Account Settings", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            EditField("Username", state.username)
-            EditField("Phone number", state.phone)
-            EditField("Email", state.email)
+
+            UsernameTextField(state.username, required = false)
+            EmailTextField(state.email, required = false)
+
             DropdownField("Currency", "DKK")
-            ButtonField("Save", {})
+            ButtonField("Save", {
+                viewModel.onSaveClicked()
+            })
 
             Spacer(modifier = Modifier.weight(1f))
 

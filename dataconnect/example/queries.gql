@@ -215,6 +215,15 @@ query GetGroupById($groupId: UUID!) @auth(level: USER, insecureReason: "Authenti
   }
 }
 
+query GetUserById($userId: String!) @auth(level: USER, insecureReason: "Authenticated users can view user details") {
+  user(key: { id: $userId }) {
+    id
+    username
+    phone
+    email
+  }
+}
+
 query GetUserExpenseShareInGroup($groupId: UUID!) @auth(level: USER) {
   expenseProviders(
     where: {

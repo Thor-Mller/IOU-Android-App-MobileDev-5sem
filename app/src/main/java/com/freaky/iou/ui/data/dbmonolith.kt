@@ -10,6 +10,7 @@ import com.google.firebase.dataconnect.generated.ExampleConnector
 import com.google.firebase.dataconnect.generated.GetCurrentGroupsQuery
 import com.google.firebase.dataconnect.generated.GetExpensesInGroupQuery
 import com.google.firebase.dataconnect.generated.GetGroupByIdQuery
+import com.google.firebase.dataconnect.generated.GetUserByIdQuery
 import com.google.firebase.dataconnect.generated.GetUserExpenseShareInGroupQuery
 import com.google.firebase.dataconnect.generated.GetUsersInGroupQuery
 import com.google.firebase.dataconnect.generated.SearchUsersByUsernameQuery
@@ -103,6 +104,12 @@ object Database {
         val user = auth.currentUser ?: throw IllegalStateException("User is not signed in.")
         connector.deleteCurrentUser.execute()
         user.delete().await()
+    }
+
+    suspend fun getUser(id: String): Result<User?> = safeCall {
+        val user = auth.currentUser ?: throw IllegalStateException("User is not signed in.")
+        val response = connector.getUserById.execute(id)
+        response.data.user?.toUser()
     }
 
     /**
@@ -265,6 +272,14 @@ object Database {
             Result.failure(e)
         }
 
+    fun GetUserByIdQuery.Data.User.toUser(): User {
+        return User(
+            id = this.id,
+            username = this.username,
+            phone = this.phone,
+            email = this.email,
+        )
+    }
     fun SearchUsersByUsernameQuery.Data.UsersItem.toUser(): User {
         return User(
             id = this.id,
