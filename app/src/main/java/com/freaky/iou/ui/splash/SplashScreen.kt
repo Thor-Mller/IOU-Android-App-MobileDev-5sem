@@ -1,7 +1,6 @@
 package com.freaky.iou.ui.splash
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +26,8 @@ fun SplashScreen(
     )
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        iterations = 1 // Play once for the splash screen
+        iterations = 1, // Play once for the splash screen
+        speed = 2.0f
     )
 
     val isFinished = composition != null && progress == 1f
@@ -44,7 +44,7 @@ fun SplashScreen(
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = Color.Black
     ) {
         LottieAnimation(
             composition = composition,
