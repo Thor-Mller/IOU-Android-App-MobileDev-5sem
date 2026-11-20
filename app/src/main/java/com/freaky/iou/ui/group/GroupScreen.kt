@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -55,6 +56,7 @@ private enum class ExpenseTab(val title: String) {
 @Composable
 fun GroupScreen(
     viewModel: GroupViewModel,
+    onOpenSummary: () -> Unit = {},
     onAddExpense: () -> Unit = {},
     onExpenseClick: (expense: Expense, shareAmount: Int) -> Unit = { _, _ -> }
 ) {
@@ -90,21 +92,27 @@ fun GroupScreen(
                 .padding(horizontal = 20.dp, vertical = 24.dp),
         ) {
             // Header
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = state.group?.name?.ifBlank { "Group" } ?: "Group",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                state.group?.creator?.username?.let { creator ->
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Created by $creator",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = state.group?.name?.ifBlank { "Group" } ?: "Group",
+                        style = MaterialTheme.typography.titleLarge
                     )
+                    state.group?.creator?.username?.let { creator ->
+                        Text(
+                            text = "Created by $creator",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                OutlinedButton(onClick = onOpenSummary) {
+                    Text("Group Summary")
                 }
             }
 

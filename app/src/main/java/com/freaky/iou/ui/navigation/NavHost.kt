@@ -15,6 +15,8 @@ import com.freaky.iou.ui.auth.signup.SignupScreen
 import com.freaky.iou.ui.expense.NewExpenseViewModel
 import com.freaky.iou.ui.group.GroupScreen
 import com.freaky.iou.ui.group.GroupViewModel
+import com.freaky.iou.ui.groupsummary.GroupSummaryScreen
+import com.freaky.iou.ui.groupsummary.GroupSummaryViewModel
 import com.freaky.iou.ui.home.HomeScreen
 import com.freaky.iou.ui.newgroup.NewGroupScreen
 import com.freaky.iou.ui.payment.viewmodels.PaymentViewModel
@@ -149,6 +151,9 @@ fun AppNavigation() {
 
                 GroupScreen(
                     viewModel = groupViewModel,
+                    onOpenSummary = {
+                        navController.navigate(GroupSummaryRoute(groupId = route.groupId))
+                    },
                     onAddExpense = {
                         navController.navigate(NewExpenseRoute(groupId = route.groupId))
                     },
@@ -159,6 +164,22 @@ fun AppNavigation() {
                                 payAmount = shareAmount
                             )
                         )
+                    }
+                )
+            }
+
+            composable<GroupSummaryRoute> { backStackEntry ->
+                val route = backStackEntry.toRoute<GroupSummaryRoute>()
+                val groupId = UUID.fromString(route.groupId)
+
+                val summaryViewModel: GroupSummaryViewModel = viewModel {
+                    GroupSummaryViewModel(groupId = groupId)
+                }
+
+                GroupSummaryScreen(
+                    viewModel = summaryViewModel,
+                    onBack = {
+                        navController.navigateUp()
                     }
                 )
             }
