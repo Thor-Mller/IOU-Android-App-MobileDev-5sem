@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.freaky.iou.ui.data.Database
 import com.freaky.iou.ui.data.models.User
+import com.freaky.iou.ui.helpers.calculateExactShares
+import com.freaky.iou.ui.helpers.splitEquallyBps
 import com.freaky.iou.ui.payment.states.ExpenseState
 import kotlinx.coroutines.launch
 import java.math.RoundingMode
@@ -198,36 +200,4 @@ class NewExpenseViewModel(
         searchResults = emptyList()
     }
 
-    private fun splitEquallyBps(members: Collection<String>): Map<String, Int> {
-        if (members.isEmpty()) return emptyMap()
-        val base = FULL_SPLIT_BPS / members.size
-        val remainder = FULL_SPLIT_BPS % members.size
-        return members.mapIndexed { index, id ->
-            id to (base + if (index < remainder) 1 else 0)
-        }.toMap()
-    }
-
-    private fun calculateExactShares(
-        totalCents: Int,
-        memberBps: Map<String, Int>
-    ): Map<String, Int> {
-        val entries = memberBps.entries.filter { it.value > 0 }
-        val totalBps = entries.sumOf { it.value.toLong() }
-        if (entries.isEmpty() || totalCents <= 0 || totalBps <= 0L) return emptyMap()
-
-        val rawShares = entries.map { (id, bps) ->
-            val numerator = totalCents.toLong() * bps.toLong()
-            val base = (numerator / totalBps).toInt()
-            val remainder = numerator % totalBps
-            Triple(id, base, remainder)
-        }
-
-        val leftoverCents = totalCents - rawShares.sumOf { it.second }
-        return rawShares
-            .sortedByDescending { it.third }
-            .mapIndexed { index, (id, base, _) ->
-                id to (base + if (index < leftoverCents) 1 else 0)
-            }
-            .toMap()
-    }
 }
