@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.dataconnect.generated.ExampleConnector
 import com.google.firebase.dataconnect.generated.GetCurrentGroupsQuery
+import com.google.firebase.dataconnect.generated.GetCurrentUserQuery
 import com.google.firebase.dataconnect.generated.GetExpensesInGroupQuery
 import com.google.firebase.dataconnect.generated.GetGroupByIdQuery
 import com.google.firebase.dataconnect.generated.GetUserExpenseShareInGroupQuery
@@ -39,6 +40,10 @@ object Database {
         result.user ?: throw IllegalStateException("User creation returned null.")
     }
 
+    suspend fun getCurrentUser(): Result<User> = safeCall {
+        connector.getCurrentUser.execute().data.user?.toUser()
+            ?: throw IllegalStateException("No user found")
+    }
     suspend fun createUserRecord(
         username: String,
         phone: String?,
@@ -331,6 +336,15 @@ object Database {
                 creator = this.group.creator.toUser(),
                 name = this.group.name
             )
+        )
+    }
+
+    fun GetCurrentUserQuery.Data.User.toUser(): User {
+        return User(
+            id = this.id,
+            email = this.email,
+            phone = this.phone,
+            username = this.username
         )
     }
 }

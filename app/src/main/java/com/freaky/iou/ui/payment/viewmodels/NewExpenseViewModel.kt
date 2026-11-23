@@ -89,13 +89,6 @@ class NewExpenseViewModel(
         val updated = uiState.memberPercentages + (memberId to clamped)
         uiState = uiState.copy(memberPercentages = updated)
     }
-
-    fun splitEqually() {
-        val memberList = uiState.getMembers().toList()
-        if (memberList.isEmpty()) return
-        uiState = uiState.copy(memberPercentages = splitEquallyBps(memberList))
-    }
-
     fun addDebtor(userId: String, username: String? = null) {
         val cleanId = userId.trim()
         if (cleanId.isBlank() || uiState.getMembers().contains(cleanId)) return
@@ -136,6 +129,9 @@ class NewExpenseViewModel(
                 memberBps = uiState.memberPercentages
             )
 
+            val currentUser = Database.getCurrentUser().getOrDefault(User())
+            val currentUserShare = exactShares[currentUser.id]
+
             val expenseResult = Database.createExpense(
                 name = uiState.title.trim(),
                 amount = uiState.totalAmount,
@@ -160,6 +156,10 @@ class NewExpenseViewModel(
                                 ?: "Failed to add member to expense."
                             return@launch
                         }
+                    }
+
+                    if (currentUserShare != null) {
+                        Database.addPaymentToExpense(expenseId, currentUserShare)
                     }
 
                     isSaving = false
